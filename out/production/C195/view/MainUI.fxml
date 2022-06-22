@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+
+<AnchorPane fx:id="mainPanel"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controller.MainUIController"
+            prefHeight="605.0" prefWidth="857.0"
+>
+    <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="605.0" prefWidth="857.0">
+        <center>
+            <TabPane prefHeight="600.0" prefWidth="750.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER" fx:id="tabPane">
+                <Tab text="Appointments">
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="525.0" prefWidth="857.0">
+                        <BorderPane layoutY="-1.0" prefHeight="525.0" prefWidth="855.0">
+                            <bottom>
+                                <ToolBar prefHeight="0.0" prefWidth="855.0" BorderPane.alignment="CENTER">
+                                    <Button mnemonicParsing="false" text="Add" onAction="#handleAppointmentButtonClicked" fx:id="addAppointmentButton"/>
+                                    <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Update" onAction="#handleAppointmentButtonClicked" fx:id="updateAppointmentButton"/>
+                                    <Button layoutX="68.0" layoutY="10.0" mnemonicParsing="false" text="Delete" onAction="#handleAppointmentButtonClicked" fx:id="deleteAppointmentButton"/>
+<!--                                    <Button layoutX="227.0" layoutY="10.0" mnemonicParsing="false" text="Reports" fx:id="appointmentReportsButton"/>-->
+<!--                                    <Button  mnemonicParsing="false" fx:id="refreshAppointmentTableButton" text="Refresh" onAction="#loadAppointmentsTable"/>-->
+                                    <Button  mnemonicParsing="false" fx:id="refreshAppointmentTableButton" text="Refresh" onAction="#loadFilteredAppointmentsTable"/>
+                                </ToolBar>
+                            </bottom>
+                            <center>
+                                <TableView prefHeight="490.0" prefWidth="855.0" BorderPane.alignment="CENTER" fx:id="appointmentsTable" onMouseClicked="#appointmentTableViewRowChosen">
+                                    <columns>
+                                        <TableColumn prefWidth="110.0" text="Appointment ID">
+                                            <cellValueFactory>
+                                                <PropertyValueFactory property="appointmentID"/>
+                                            </cellValueFactory>
+                                        </TableColumn>
+
+                                        <TableColumn minWidth="0.0" prefWidth="100" text="Start Time">
+                                            <cellValueFactory>
+                                                <PropertyValueFactory property="startTime"/>
+                                            </cellValueFactory>
+                                        </TableColumn>
+
+                                        <TableColumn minWidth="0.0" prefWidth="100.0" text="End Time">
+                                            <cellValueFactory>
+                                                <PropertyValueFactory property="endTime"/>
+                                            </cellValueFactory>
+                                        </TableColumn>
+
+                                        <TableColumn minWidth="0.0" prefWidth="120.0" text="Start Date">
+                                            <cellValueFactory>
+                                                <PropertyValueFactory property="startDate"/>
+                                            </cellValueFactory>
+                                        </TableColumn>
+
+                                        <TableColumn minWidth="0.0" prefWidth="120.0" text="End Date">
+                                            <cellValueFactory>
+                                                <PropertyValueFactory property="endDate"/>
+                                            </cellValueFactory>
+                                        </TableColumn>
+
+                                        <TableColumn minWidth="0.0" prefWidth="120" text="Type">
+                                            <cellValueFactory>
+                                                <PropertyValueFactory property="type"/>
+                                            </cellValueFactory>
+                                        </TableColumn>
+
+                                        <TableColumn minWidth="0.0" prefWidth="120.0" text="Title">
+                                            <cellValueFactory>
+                                                <PropertyValueFactory property="title"/>
+                                            </cellValueFactory>
+                                        </TableColumn>
+
+                                        <TableColumn minWidth="0.0" prefWidth="180.0" text="Description">
+                                            <cellValueFactory>
+                                                <PropertyValueFactory property="description"/>
+                                            </cellValueFactory>
+                                        </TableColumn>
+
+                                        <TableColumn minWidth="0.0" prefWidth="180.0" text="Location">
+                                            <cellValueFactory>
+                                                <PropertyValueFactory property="location"/>
+                                            </cellValueFactory>
+                                        </TableColumn>
+
+                                        <TableColumn minWidth="0.0" prefWidth="150.0" text="Contact">
+                                            <cellValueFactory>
+                                                <PropertyValueFactory property="contactName"/>
+                                            </cellValueFactory>
+                                        </TableColumn>
+
+                                        <TableColumn minWidth="0.0" prefWidth="85" text="Customer ID">
+                                            <cellValueFactory>
+                                                <PropertyValueFactory property="customerID"/>
+                                            </cellValueFactory>
+                                        </TableColumn>
+
+                                        <TableColumn minWidth="0.0" prefWidth="85" text="User ID">
+                                            <cellValueFactory>
+                                                <PropertyValueFactory property="userID"/>
+                                            </cellValueFactory>
+                                        </TableColumn>
+
+                                    </columns>
+                                </TableView>
+                            </center>
+                            <top>
+                                <GridPane alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="855.0" BorderPane.alignment="CENTER">
+                                    <Label alignment="CENTER" prefHeight="17.0" prefWidth="64.0" text="Filter by">
+                                        <GridPane.margin>
+                                            <Insets left="15.0" right="5.0"/>
+                                        </GridPane.margin>
+                                    </Label>
+                                    <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" fx:id="filterAppointmentsByChoiceBox" onAction="#handleAppointmentFilterChoice"/>
+                                    <DatePicker GridPane.columnIndex="2" fx:id="appointmentDatePickerField" editable="false">
+                                        <GridPane.margin>
+                                            <Insets bottom="5.0" left="10.0" right="10.0" top="5.0"/>
+                                        </GridPane.margin>
+                                    </DatePicker>
+
+                                    <Label alignment="CENTER" GridPane.columnIndex="3" prefHeight="17.0" prefWidth="64.0" text="Search by">
+                                        <GridPane.margin>
+                                            <Insets left="40.0" right="5.0"/>
+                                        </GridPane.margin>
+                                    </Label>
+                                    <ChoiceBox prefWidth="150.0" GridPane.columnIndex="4" fx:id="searchAppointmentsByChoiceBox" onAction="#handleAppointmentSearchFilterChoice"/>
+                                    <TextField GridPane.columnIndex="5" fx:id="searchAppointmentsTextField" promptText="Search Appointments">
+                                        <GridPane.margin>
+                                            <Insets left="10.0" right="10.0"/>
+                                        </GridPane.margin>
+                                    </TextField>
+                                </GridPane>
+
+<!--                                <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="855.0" BorderPane.alignment="CENTER">-->
+<!--                                    <Label alignment="CENTER" prefHeight="17.0" prefWidth="64.0" text="Filter by ">-->
+<!--                                        <HBox.margin>-->
+<!--                                            <Insets left="20.0" right="5.0"/>-->
+<!--                                        </HBox.margin>-->
+<!--                                    </Label>-->
+<!--                                    <ChoiceBox prefWidth="150.0" fx:id="filterAppointmentsByChoiceBox" onAction="#handleAppointmentFilterChoice"/>-->
+<!--                                    <TextField fx:id="searchAppointmentsTextField" visible="false" promptText="Search Appointments">-->
+<!--                                        <HBox.margin>-->
+<!--                                            <Insets left="10.0" right="10.0" />-->
+<!--                                        </HBox.margin>-->
+<!--                                    </TextField>-->
+<!--                                </HBox>-->
+
+                            </top>
+                        </BorderPane>
+                    </AnchorPane>
+                </Tab>
+                <Tab text="Customers">
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="525.0" prefWidth="857.0">
+                        <BorderPane layoutY="-1.0" prefHeight="525.0" prefWidth="855.0">
+                            <top>
+                                <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="855.0" BorderPane.alignment="CENTER">
+<!--                                    <Label alignment="CENTER" prefHeight="17.0" prefWidth="64.0" text="Search by">-->
+<!--                                        <HBox.margin>-->
+<!--                                            <Insets left="15.0" right="5.0"/>-->
+<!--                                        </HBox.margin>-->
+<!--                                    </Label>-->
+<!--                                    <ChoiceBox prefWidth="150.0" fx:id="filterCustomersByChoiceBox" onAction="#handleCustomerChoiceBoxChoice"/>-->
+<!--                                    <TextField fx:id="searchCustomersTextField" promptText="Search Customers" >-->
+<!--                                        <HBox.margin>-->
+<!--                                            <Insets left="20.0" right="10.0"/>-->
+<!--                                        </HBox.margin>-->
+<!--                                    </TextField>-->
+
+
+                                    <Label alignment="CENTER" prefHeight="17.0" prefWidth="64.0" text="Country">
+                                        <HBox.margin>
+                                            <Insets left="15.0" right="5.0"/>
+                                        </HBox.margin>
+                                    </Label>
+                                    <ChoiceBox prefWidth="150.0" fx:id="filterCustomersByCountryChoiceBox" onAction="#handleCustomerCountryChoiceBoxChoice"/>
+
+                                    <Label alignment="CENTER" prefHeight="17.0" prefWidth="64.0" text="Division" fx:id="divisionLabel">
+                                        <HBox.margin>
+                                            <Insets left="15.0" right="5.0"/>
+                                        </HBox.margin>
+                                    </Label>
+                                    <ChoiceBox prefWidth="150.0" fx:id="filterCustomersByDivisionChoiceBox" onAction="#handleCustomerDivisionChoiceBoxChoice"/>
+<!--                                    <ChoiceBox prefWidth="150.0" fx:id="filterCustomersByDivisionChoiceBox" onAction="#handleCustomerCountryChoiceBoxChoice"/>-->
+
+                                    <Label alignment="CENTER" prefHeight="17.0" prefWidth="64.0" text="Search by">
+                                        <HBox.margin>
+                                            <Insets left="50.0" right="5.0"/>
+                                        </HBox.margin>
+                                    </Label>
+                                    <ChoiceBox prefWidth="150" fx:id="searchCustomersByChoiceBox" onAction="#handleCustomerSearchFilterChoice"/>
+                                    <TextField fx:id="searchCustomersTextField" promptText="Search Customers">
+                                        <HBox.margin>
+                                            <Insets left="10.0" right="10.0"/>
+                                        </HBox.margin>
+                                    </TextField>
+                                </HBox>
+                            </top>
+                            <bottom>
+                                <ToolBar prefHeight="0.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+                                    <Button mnemonicParsing="false" fx:id="addCustomerButton" text="Add"  onAction="#handleCustomerButtonClicked"/>
+                                    <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" fx:id="updateCustomerButton" text="Update" onAction="#handleCustomerButtonClicked"/>
+                                    <Button layoutX="68.0" layoutY="10.0" mnemonicParsing="false" fx:id="deleteCustomerButton" text="Delete" onAction="#handleCustomerButtonClicked"/>
+<!--                                    <Button layoutX="227.0" layoutY="10.0" mnemonicParsing="false" fx:id="customerReportsButton" text="Reports" onAction="#handleCustomerButtonClicked"/>-->
+<!--                                    <Button  mnemonicParsing="false" fx:id="refreshCustomerTableButton" text="Refresh" onAction="#loadCustomersTable"/>-->
+                                    <Button  mnemonicParsing="false" fx:id="refreshCustomerTableButton" text="Refresh" onAction="#loadFilteredCustomersTable"/>
+                                </ToolBar>
+                            </bottom>
+                            <center>
+                                <TableView prefHeight="295.0" prefWidth="796.0" BorderPane.alignment="CENTER" fx:id="customersTable" onMouseClicked="#customerTableViewRowChosen">
+                                    <columns>
+                                        <TableColumn prefWidth="85" text="Customer ID">
+                                            <cellValueFactory>
+                                                <PropertyValueFactory property="customerID"/>
+                                            </cellValueFactory>
+                                        </TableColumn>
+
+                                        <TableColumn minWidth="0.0" prefWidth="180" text="Customer Name">
+                                            <cellValueFactory>
+                                                <PropertyValueFactory property="customerName"/>
+                                            </cellValueFactory>
+                                        </TableColumn>
+
+                                        <TableColumn minWidth="0.0" prefWidth="180" text="Address">
+                                            <cellValueFactory>
+                                                <PropertyValueFactory property="address"/>
+                                            </cellValueFactory>
+                                        </TableColumn>
+
+                                        <TableColumn minWidth="0.0" prefWidth="100.0" text="Postal Code">
+                                            <cellValueFactory>
+                                                <PropertyValueFactory property="postalCode"/>
+                                            </cellValueFactory>
+                                        </TableColumn>
+
+                                        <TableColumn minWidth="0.0" prefWidth="180.0" text="Phone Number">
+                                            <cellValueFactory>
+                                                <PropertyValueFactory property="phone"/>
+                                            </cellValueFactory>
+                                        </TableColumn>
+
+                                        <TableColumn minWidth="30.0" prefWidth="85.0" text="Division ID">
+                                            <cellValueFactory>
+                                                <PropertyValueFactory property="divisionID"/>
+                                            </cellValueFactory>
+                                        </TableColumn>
+
+                                    </columns>
+                                </TableView>
+                            </center>
+                        </BorderPane>
+                    </AnchorPane>
+                </Tab>
+            </TabPane>
+        </center>
+
+        <bottom>
+            <HBox alignment="CENTER_RIGHT" BorderPane.alignment="CENTER">
+                <Button mnemonicParsing="false" fx:id="logoutButton" text="Logout"  onAction="#logoutButtonClicked">
+                    <HBox.margin>
+                        <Insets right="15.0" bottom="10" top="10"/>
+                    </HBox.margin>
+                </Button>
+            </HBox>
+        </bottom>
+    </BorderPane>
+</AnchorPane>
