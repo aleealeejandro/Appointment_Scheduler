@@ -15,9 +15,8 @@ import java.time.ZoneOffset;
 public class AppointmentsQuery {
     public static ObservableList<Appointment> getAllAppointments(String filterBy, LocalDateTime timeNow, LocalDateTime dateTimeChosen) throws SQLException {
         String timeNowString = TimeController.getUtcDatetime(timeNow).format(TimeController.timestampFormatter);
-        String dateTimeChosenString = TimeController.getUtcDatetime(dateTimeChosen).format(TimeController.timestampFormatter);
+//        String dateTimeChosenString = TimeController.getUtcDatetime(dateTimeChosen).format(TimeController.timestampFormatter);
         ObservableList<Appointment> appointments = FXCollections.observableArrayList();
-//        String query = "SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, Contact_ID FROM client_schedule.appointments ORDER BY Start;";
         String query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' ORDER BY Start;", timeNowString);
 
         switch (filterBy) {
@@ -32,13 +31,15 @@ public class AppointmentsQuery {
                 System.out.println(TimeController.startOfWeekDateTime.format(TimeController.timestampFormatter) + "\n" + TimeController.endOfWeekDateTime.format(TimeController.timestampFormatter));
                 break;
             case "Today":
-                query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' AND Start LIKE '%s' ORDER BY Start;", timeNowString, TimeController.startDate+"%");
+                query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' AND Start BETWEEN '%s' AND '%s' ORDER BY Start;", timeNowString, TimeController.getUtcDatetime(TimeController.openTime), TimeController.getUtcDatetime(TimeController.closeTime));
 
                 break;
             case "My Appointments":
                 query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' AND User_ID='%s' ORDER BY Start;", timeNowString, MainUIController.loggedInUserID);
                 break;
         }
+
+//        "DELETE FROM client_schedule.appointments WHERE End <= '%s';
         try {
             PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(query);
             ResultSet appointmentsSet = preparedStatement.executeQuery();
@@ -78,82 +79,13 @@ public class AppointmentsQuery {
         }
     }
 
-//    public static ObservableList<Appointment> getAllAppointments(String filterBy, LocalDateTime timeNow) throws SQLException {
-//        String timeNowString = TimeController.getUtcDatetime(timeNow).format(TimeController.timestampFormatter);
-//        ObservableList<Appointment> appointments = FXCollections.observableArrayList();
-////        String query = "SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, Contact_ID FROM client_schedule.appointments ORDER BY Start;";
-//        String query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' ORDER BY Start;", timeNowString);
-//
-//        switch (filterBy) {
-//            case "All":
-//                query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' ORDER BY Start;", timeNowString);
-//                break;
-//            case "This Month":
-//                query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' AND Start BETWEEN '%s' AND '%s' ORDER BY Start;", timeNowString, TimeController.getUtcDatetime(TimeController.firstDateTimeOfMonth)+"%", TimeController.getUtcDatetime(TimeController.lastDateTimeOfMonth)+"%");
-//                break;
-//            case "This Week":
-//                query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' AND Start BETWEEN '%s' AND '%s' ORDER BY Start;", timeNowString, TimeController.getUtcDatetime(TimeController.startOfWeekDateTime)+"%", TimeController.getUtcDatetime(TimeController.endOfWeekDateTime)+"%");
-//                System.out.println(TimeController.startOfWeekDateTime.format(TimeController.timestampFormatter) + "\n" + TimeController.endOfWeekDateTime.format(TimeController.timestampFormatter));
-//                break;
-//            case "Today":
-//                query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' AND Start LIKE '%s' ORDER BY Start;", timeNowString, TimeController.startDate+"%");
-//
-//                break;
-//            case "My Appointments":
-//                query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' AND User_ID='%s' ORDER BY Start;", timeNowString, MainUIController.loggedInUserID);
-//                break;
-//        }
-//        try {
-//            PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(query);
-//            ResultSet appointmentsSet = preparedStatement.executeQuery();
-//
-//            while(appointmentsSet.next()) {
-//                String appointmentID = appointmentsSet.getString("Appointment_ID");
-//                String title = appointmentsSet.getString("Title");
-//                String description = appointmentsSet.getString("Description");
-//                String location = appointmentsSet.getString("Location");
-//                String type = appointmentsSet.getString("Type");
-//                assert false;
-//
-//                LocalDateTime  startTimeObject = appointmentsSet.getTimestamp("Start").toLocalDateTime();
-////                change from UTC to SYSTEM LocalDateTime
-//                startTimeObject = TimeController.getSystemDatetime(startTimeObject);
-//                String startTime = startTimeObject.format(TimeController.timeFormatter);
-//                LocalDate startDate = startTimeObject.toLocalDate();
-//
-//                LocalDateTime endTimeObject = appointmentsSet.getTimestamp("End").toLocalDateTime();
-////                change from UTC to SYSTEM LocalDateTime
-//                endTimeObject = TimeController.getSystemDatetime(endTimeObject);
-//                String endTime = endTimeObject.format(TimeController.timeFormatter);
-//                LocalDate endDate = endTimeObject.toLocalDate();
-//
-//                String customerID = appointmentsSet.getString("Customer_ID");
-//                String userID = appointmentsSet.getString("User_ID");
-//                String contactID = appointmentsSet.getString("a.Contact_ID");
-//                String contactName = appointmentsSet.getString("c.Contact_Name");
-//                Appointment appointment = new Appointment(appointmentID, title, description, location, type, startDate, startTime, endDate, endTime, customerID, userID, contactID, contactName);
-//                appointments.add(appointment);
-//            }
-//
-//            return appointments;
-//        } catch (SQLException err) {
-//            err.printStackTrace();
-//            return null;
-//        }
-//    }
-// QUERY FUNCTIONS TO DO
-
-    public static boolean deleteAppointment(String appointmentID) throws SQLException {
+    public static boolean deleteAppointment(String appointmentID) {
         String query = "DELETE FROM client_schedule.appointments WHERE Appointment_ID=\"" + appointmentID + "\";";
         try {
             PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(query);
             int deleteBool = preparedStatement.executeUpdate();
 
-            if(deleteBool == 1){
-                return true;
-            }
-
-            return false;
+            return deleteBool == 1;
         } catch (SQLException | RuntimeException e) {
             e.printStackTrace();
             return false;
@@ -181,7 +113,7 @@ public class AppointmentsQuery {
                 count = resultSet.getInt(1);
             }
             // returns true or false
-            System.out.println("count: " + count);
+//            System.out.println("count: " + count);
             return count > 0;
         } catch (SQLException | RuntimeException e) {
             e.printStackTrace();
@@ -247,12 +179,10 @@ public class AppointmentsQuery {
             PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(query);
             int addedBoolean = preparedStatement.executeUpdate();
 
-            if(addedBoolean == 1){
-                return true;
-            }
-            return false;
+            return addedBoolean == 1;
         } catch (SQLException | RuntimeException err) {
-            System.out.println(err);
+//            System.out.println(err);
+            err.printStackTrace();
             return false;
         }
     }
@@ -260,7 +190,8 @@ public class AppointmentsQuery {
         LocalTime startTime = LocalTime.parse(appointment.getStartTime(), TimeController.timeFormatter);
         LocalTime endTime = LocalTime.parse(appointment.getEndTime(), TimeController.timeFormatter);
         LocalDateTime start = LocalDateTime.of(appointment.getStartDate(), startTime);
-        LocalDateTime end = LocalDateTime.of(appointment.getStartDate(), endTime);
+//        LocalDateTime end = LocalDateTime.of(appointment.getStartDate(), endTime);
+        LocalDateTime end = LocalDateTime.of(appointment.getEndDate(), endTime);
         start = TimeController.getUtcDatetime(start);
         end = TimeController.getUtcDatetime(end);
 
@@ -283,12 +214,10 @@ public class AppointmentsQuery {
             PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(query);
             int addedBoolean = preparedStatement.executeUpdate();
 
-            if(addedBoolean == 1){
-                return true;
-            }
-            return false;
+            return addedBoolean == 1;
         } catch (SQLException | RuntimeException err) {
-            System.out.println(err);
+            err.printStackTrace();
+//            System.out.println(err);
             return false;
         }
     }
@@ -335,14 +264,6 @@ public class AppointmentsQuery {
             return -1;
         }
     }
-
-//    public static ObservableList<Appointment> getAppointmentsByAppointmentID(int appointmentID) throws SQLException {}
-//    public static ObservableList<Appointment> getAppointmentsByCustomerID(int customerID) throws SQLException {}
-//    public static ObservableList<Appointment> getAppointmentsByUserID(int userID) throws SQLException {}
-//    public static ObservableList<Appointment> getAppointmentsByContactID(int contactID) throws SQLException {}
-//    public static ObservableList<Appointment> getAppointmentsToday() throws SQLException {}
-//    public static ObservableList<Appointment> getAppointmentsByWeek() throws SQLException {}
-//    public static ObservableList<Appointment> getAppointmentsByMonth() throws SQLException {}
 
 }
 

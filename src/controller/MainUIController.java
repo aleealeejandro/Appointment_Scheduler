@@ -79,8 +79,8 @@ public class MainUIController implements Initializable {
         disableDatesOnDatePicker();
 
 
-        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-        executorService.scheduleAtFixedRate(MainUIController::runTask, 0, 10, TimeUnit.SECONDS);
+//        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+//        executorService.scheduleAtFixedRate(MainUIController::runTask, 0, 10, TimeUnit.SECONDS);
 
         loadAppointmentFilterChoices();
         loadAppointmentSearchFilterChoiceBoxChoices();
@@ -133,8 +133,6 @@ public class MainUIController implements Initializable {
         filterAppointmentsByChoiceBox.getSelectionModel().selectFirst();
         appointmentFilterChoiceBoxChoice = filterAppointmentsByChoiceBox.getSelectionModel().getSelectedItem();
 
-//        appointmentFilterChoiceBoxChoice = "All";
-//        filterAppointmentsByChoiceBox.setValue(appointmentFilterChoiceBoxChoice);
         loadFilteredAppointmentsTable();
     }
 
@@ -142,8 +140,7 @@ public class MainUIController implements Initializable {
         searchAppointmentsByChoiceBox.getItems().addAll("Contact", "Type");
         searchAppointmentsByChoiceBox.getSelectionModel().selectFirst();
         searchAppointmentsByChoiceBoxChoice = searchAppointmentsByChoiceBox.getSelectionModel().getSelectedItem();
-//        searchAppointmentsByChoiceBoxChoice = "Contact";
-//        searchAppointmentsByChoiceBox.setValue(appointmentFilterChoiceBoxChoice);
+
         loadFilteredAppointmentsTable();
     }
 
@@ -219,7 +216,7 @@ public class MainUIController implements Initializable {
     }
 
     @FXML
-    void handleAppointmentButtonClicked(ActionEvent event) throws SQLException {
+    void handleAppointmentButtonClicked(ActionEvent event) {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.initOwner(mainPanel.getScene().getWindow());
         FXMLLoader fxmlLoader = new FXMLLoader();
