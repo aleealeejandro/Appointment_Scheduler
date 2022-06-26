@@ -6,6 +6,7 @@
 
 <?import javafx.geometry.Insets?>
 
+<?import javafx.scene.text.Font?>
 <AnchorPane fx:id="mainPanel"
             xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
@@ -23,88 +24,99 @@
                                     <Button mnemonicParsing="false" text="Add" onAction="#handleAppointmentButtonClicked" fx:id="addAppointmentButton"/>
                                     <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Update" onAction="#handleAppointmentButtonClicked" fx:id="updateAppointmentButton"/>
                                     <Button layoutX="68.0" layoutY="10.0" mnemonicParsing="false" text="Delete" onAction="#handleAppointmentButtonClicked" fx:id="deleteAppointmentButton"/>
-<!--                                    <Button layoutX="227.0" layoutY="10.0" mnemonicParsing="false" text="Reports" fx:id="appointmentReportsButton"/>-->
-<!--                                    <Button  mnemonicParsing="false" fx:id="refreshAppointmentTableButton" text="Refresh" onAction="#loadAppointmentsTable"/>-->
                                     <Button  mnemonicParsing="false" fx:id="refreshAppointmentTableButton" text="Refresh" onAction="#loadFilteredAppointmentsTable"/>
                                 </ToolBar>
                             </bottom>
                             <center>
-                                <TableView prefHeight="490.0" prefWidth="855.0" BorderPane.alignment="CENTER" fx:id="appointmentsTable" onMouseClicked="#appointmentTableViewRowChosen">
-                                    <columns>
-                                        <TableColumn prefWidth="110.0" text="Appointment ID">
-                                            <cellValueFactory>
-                                                <PropertyValueFactory property="appointmentID"/>
-                                            </cellValueFactory>
-                                        </TableColumn>
+                                <VBox>
+                                    <HBox alignment="CENTER_LEFT" prefHeight="71.0" prefWidth="441.0">
+                                        <Label alignment="CENTER" contentDisplay="CENTER" fx:id="tableFilterLabel">
+                                            <font>
+                                                <Font name="SansSerif Regular" size="18.0"/>
+                                            </font>
+                                            <HBox.margin>
+                                                <Insets left="20" bottom="10.0" top="10.0"/>
+                                            </HBox.margin>
+                                        </Label>
 
-                                        <TableColumn minWidth="0.0" prefWidth="100" text="Start Time">
-                                            <cellValueFactory>
-                                                <PropertyValueFactory property="startTime"/>
-                                            </cellValueFactory>
-                                        </TableColumn>
+                                    </HBox>
+                                    <TableView prefHeight="490.0" prefWidth="855.0" BorderPane.alignment="CENTER" fx:id="appointmentsTable" onMouseClicked="#appointmentTableViewRowChosen">
+                                        <columns>
+                                            <TableColumn prefWidth="110.0" text="Appointment ID">
+                                                <cellValueFactory>
+                                                    <PropertyValueFactory property="appointmentID"/>
+                                                </cellValueFactory>
+                                            </TableColumn>
 
-                                        <TableColumn minWidth="0.0" prefWidth="100.0" text="End Time">
-                                            <cellValueFactory>
-                                                <PropertyValueFactory property="endTime"/>
-                                            </cellValueFactory>
-                                        </TableColumn>
+                                            <TableColumn minWidth="0.0" prefWidth="100" text="Start Time">
+                                                <cellValueFactory>
+                                                    <PropertyValueFactory property="startTime"/>
+                                                </cellValueFactory>
+                                            </TableColumn>
 
-                                        <TableColumn minWidth="0.0" prefWidth="120.0" text="Start Date">
-                                            <cellValueFactory>
-                                                <PropertyValueFactory property="startDate"/>
-                                            </cellValueFactory>
-                                        </TableColumn>
+                                            <TableColumn minWidth="0.0" prefWidth="100.0" text="End Time">
+                                                <cellValueFactory>
+                                                    <PropertyValueFactory property="endTime"/>
+                                                </cellValueFactory>
+                                            </TableColumn>
 
-                                        <TableColumn minWidth="0.0" prefWidth="120.0" text="End Date">
-                                            <cellValueFactory>
-                                                <PropertyValueFactory property="endDate"/>
-                                            </cellValueFactory>
-                                        </TableColumn>
+                                            <TableColumn minWidth="0.0" prefWidth="120.0" text="Start Date">
+                                                <cellValueFactory>
+                                                    <PropertyValueFactory property="startDate"/>
+                                                </cellValueFactory>
+                                            </TableColumn>
 
-                                        <TableColumn minWidth="0.0" prefWidth="120" text="Type">
-                                            <cellValueFactory>
-                                                <PropertyValueFactory property="type"/>
-                                            </cellValueFactory>
-                                        </TableColumn>
+                                            <TableColumn minWidth="0.0" prefWidth="120.0" text="End Date">
+                                                <cellValueFactory>
+                                                    <PropertyValueFactory property="endDate"/>
+                                                </cellValueFactory>
+                                            </TableColumn>
 
-                                        <TableColumn minWidth="0.0" prefWidth="120.0" text="Title">
-                                            <cellValueFactory>
-                                                <PropertyValueFactory property="title"/>
-                                            </cellValueFactory>
-                                        </TableColumn>
+                                            <TableColumn minWidth="0.0" prefWidth="120" text="Type">
+                                                <cellValueFactory>
+                                                    <PropertyValueFactory property="type"/>
+                                                </cellValueFactory>
+                                            </TableColumn>
 
-                                        <TableColumn minWidth="0.0" prefWidth="180.0" text="Description">
-                                            <cellValueFactory>
-                                                <PropertyValueFactory property="description"/>
-                                            </cellValueFactory>
-                                        </TableColumn>
+                                            <TableColumn minWidth="0.0" prefWidth="120.0" text="Title">
+                                                <cellValueFactory>
+                                                    <PropertyValueFactory property="title"/>
+                                                </cellValueFactory>
+                                            </TableColumn>
 
-                                        <TableColumn minWidth="0.0" prefWidth="180.0" text="Location">
-                                            <cellValueFactory>
-                                                <PropertyValueFactory property="location"/>
-                                            </cellValueFactory>
-                                        </TableColumn>
+                                            <TableColumn minWidth="0.0" prefWidth="180.0" text="Description">
+                                                <cellValueFactory>
+                                                    <PropertyValueFactory property="description"/>
+                                                </cellValueFactory>
+                                            </TableColumn>
 
-                                        <TableColumn minWidth="0.0" prefWidth="150.0" text="Contact">
-                                            <cellValueFactory>
-                                                <PropertyValueFactory property="contactName"/>
-                                            </cellValueFactory>
-                                        </TableColumn>
+                                            <TableColumn minWidth="0.0" prefWidth="180.0" text="Location">
+                                                <cellValueFactory>
+                                                    <PropertyValueFactory property="location"/>
+                                                </cellValueFactory>
+                                            </TableColumn>
 
-                                        <TableColumn minWidth="0.0" prefWidth="85" text="Customer ID">
-                                            <cellValueFactory>
-                                                <PropertyValueFactory property="customerID"/>
-                                            </cellValueFactory>
-                                        </TableColumn>
+                                            <TableColumn minWidth="0.0" prefWidth="150.0" text="Contact">
+                                                <cellValueFactory>
+                                                    <PropertyValueFactory property="contactName"/>
+                                                </cellValueFactory>
+                                            </TableColumn>
 
-                                        <TableColumn minWidth="0.0" prefWidth="85" text="User ID">
-                                            <cellValueFactory>
-                                                <PropertyValueFactory property="userID"/>
-                                            </cellValueFactory>
-                                        </TableColumn>
+                                            <TableColumn minWidth="0.0" prefWidth="85" text="Customer ID">
+                                                <cellValueFactory>
+                                                    <PropertyValueFactory property="customerID"/>
+                                                </cellValueFactory>
+                                            </TableColumn>
 
-                                    </columns>
-                                </TableView>
+                                            <TableColumn minWidth="0.0" prefWidth="85" text="User ID">
+                                                <cellValueFactory>
+                                                    <PropertyValueFactory property="userID"/>
+                                                </cellValueFactory>
+                                            </TableColumn>
+
+                                        </columns>
+                                    </TableView>
+                                </VBox>
                             </center>
                             <top>
                                 <GridPane alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="855.0" BorderPane.alignment="CENTER">

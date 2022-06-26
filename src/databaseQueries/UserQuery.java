@@ -15,7 +15,8 @@ public class UserQuery {
         ObservableList<User> users = FXCollections.observableArrayList();
 
         try {
-            String allUsersQuery = "SELECT User_ID, User_Name FROM client_schedule.users ORDER BY User_ID;";
+//            String allUsersQuery = "SELECT User_ID, User_Name FROM client_schedule.users ORDER BY User_ID;";
+            String allUsersQuery = "SELECT User_ID, User_Name FROM client_schedule.users ORDER BY User_Name;";
             PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(allUsersQuery);
             ResultSet userSet = preparedStatement.executeQuery();
 
@@ -47,6 +48,23 @@ public class UserQuery {
         } catch (SQLException err) {
             err.printStackTrace();
             return -2;
+        }
+    }
+
+    public static String getUserIDFromUserName(String userName) throws SQLException {
+        try {
+            String query = String.format("SELECT User_ID FROM client_schedule.users WHERE User_Name='%s'", userName);
+            PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(query);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if(resultSet.next()) {
+                int userId = resultSet.getInt("User_ID");
+                return String.valueOf(userId);
+            } else {
+                return null;
+            }
+        } catch (SQLException err) {
+            err.printStackTrace();
+            return null;
         }
     }
 

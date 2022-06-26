@@ -25,9 +25,13 @@ public class TimeController {
     public static ZoneOffset systemOffSet = systemTimeObject.getOffset();
 
     public static int offsetSecondsTotal = estOffSet.compareTo(systemOffSet);
+    public static int amountOfHoursOfficeIsOpen = 14;
+    public static int minimumTimeDurationMinutes = 15;
     public static LocalDateTime openTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(8,0)).plusSeconds(offsetSecondsTotal);
-    public static LocalDateTime closeTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(22,0)).plusSeconds(offsetSecondsTotal);
-    public static LocalDateTime lastAppointmentSlotTimeToday = LocalDateTime.of(LocalDate.now(), LocalTime.of(21,45)).plusSeconds(offsetSecondsTotal);
+//    public static LocalDateTime closeTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(22,0)).plusSeconds(offsetSecondsTotal);
+    public static LocalDateTime closeTime = openTime.plusHours(amountOfHoursOfficeIsOpen).plusSeconds(offsetSecondsTotal);
+//    public static LocalDateTime lastAppointmentSlotTimeToday = LocalDateTime.of(LocalDate.now(), LocalTime.of(21,45)).plusSeconds(offsetSecondsTotal);
+    public static LocalDateTime lastAppointmentSlotTimeToday = closeTime.minusMinutes(15).plusSeconds(offsetSecondsTotal);
 
     public static LocalDate startDate = openTime.toLocalDate();
     public static LocalDate endDate = closeTime.toLocalDate();
@@ -85,6 +89,16 @@ public class TimeController {
 
         return endOfWeekDateTime;
     }
+
+    public static LocalDateTime getStartOfDayDateTime(LocalDateTime dateTimeChosen) {
+        LocalDateTime startOfDayDateTime = LocalDateTime.of(dateTimeChosen.toLocalDate(), openTime.toLocalTime());
+        return startOfDayDateTime;
+    }
+//
+//    public static LocalDateTime getEndOfDayDateTime(LocalDateTime dateTimeChosen) {
+//        LocalDateTime endOfDayDateTime = LocalDateTime.of(dateTimeChosen.toLocalDate(), openTime.toLocalTime());
+//        return endOfDayDateTime;
+//    }
 
     public static LocalDate nextDateAvailable() {
         LocalDateTime startDatetime = openTime;
