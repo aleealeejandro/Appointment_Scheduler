@@ -120,7 +120,9 @@ public class AppointmentFormController implements Initializable {
 
         LocalTime startTime = LocalTime.parse(appointment.getStartTime(), TimeController.timeFormatter);
         LocalTime endTime = LocalTime.parse(appointment.getEndTime(), TimeController.timeFormatter);
-        duration = (int) MINUTES.between(startTime, endTime) + 1;
+        LocalDateTime startDateTime = LocalDateTime.of(appointment.getStartDate(), startTime);
+        LocalDateTime endDateTime = LocalDateTime.of(appointment.getEndDate(), endTime);
+        duration = (int) MINUTES.between(startDateTime, endDateTime) + 1;
 
         timeDurationComboBox.getSelectionModel().select(duration + " minutes");
 
