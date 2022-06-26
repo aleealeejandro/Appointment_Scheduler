@@ -61,7 +61,7 @@ public class CustomerFormController implements Initializable {
 //     myThread.start();
 //    }
 
-    public static void getParentNodeData(String form, int loggedInUserIDNum) throws SQLException {
+    public static void getParentNodeData(String form, int loggedInUserIDNum) {
         typeOfForm = form;
         loggedInUserName = UserQuery.getUserNameFromUserID(loggedInUserIDNum);
     }

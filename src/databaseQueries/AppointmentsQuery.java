@@ -15,7 +15,6 @@ import java.time.ZoneOffset;
 public class AppointmentsQuery {
     public static ObservableList<Appointment> getAllAppointments(String filterBy, LocalDateTime timeNow, LocalDateTime dateTimeChosen) throws SQLException {
         String timeNowString = TimeController.getUtcDatetime(timeNow).format(TimeController.timestampFormatter);
-//        String dateTimeChosenString = TimeController.getUtcDatetime(dateTimeChosen).format(TimeController.timestampFormatter);
         ObservableList<Appointment> appointments = FXCollections.observableArrayList();
         String query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' ORDER BY Start;", timeNowString);
 

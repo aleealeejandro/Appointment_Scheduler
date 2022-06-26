@@ -43,16 +43,14 @@ public class MainUIController implements Initializable {
     @FXML public ChoiceBox<String> filterCustomersByDivisionChoiceBox;
     @FXML public Label divisionLabel;
     @FXML public DatePicker appointmentDatePickerField;
+    @FXML public Label tableFilterLabel;
     @FXML private AnchorPane mainPanel;
-//    @FXML private Button exitButton;
     @FXML private Button addAppointmentButton;
     @FXML private Button updateAppointmentButton;
     @FXML private Button deleteAppointmentButton;
-//    @FXML private Button appointmentReportsButton;
     @FXML private Button addCustomerButton;
     @FXML private Button updateCustomerButton;
     @FXML private Button deleteCustomerButton;
-//    @FXML private Button customerReportsButton;
     @FXML private ChoiceBox<String> filterAppointmentsByChoiceBox;
     @FXML public TableView<Appointment> appointmentsTable;
     @FXML public TableView<Customer> customersTable;
@@ -78,13 +76,14 @@ public class MainUIController implements Initializable {
         datePicked();
         disableDatesOnDatePicker();
 
-
 //        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 //        executorService.scheduleAtFixedRate(MainUIController::runTask, 0, 10, TimeUnit.SECONDS);
 
         loadAppointmentFilterChoices();
         loadAppointmentSearchFilterChoiceBoxChoices();
 
+//        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+//        executorService.scheduleAtFixedRate(runTask(), 0, 10, TimeUnit.SECONDS);
         try {
             loadCountryChoicesInChoiceBox();
         } catch (SQLException e) {
@@ -98,17 +97,16 @@ public class MainUIController implements Initializable {
         disableUpdateAndDeleteCustomerButtons();
         appointmentWithinFifteenMinutes(AppointmentsQuery.checkIfAppointmentWithinFifteenMinutes(LocalDateTime.now(), LocalDateTime.now().plusMinutes(15)));
     }
+
     public static void getUserData(int id, String username) {
         loggedInUserID = id;
         loggedInUsername = username;
     }
 
     public static void runTask() {
-//        MainUIController ui = new MainUIController();
-//        ui.loadFilteredAppointmentsTable();
+//        loadFilteredAppointmentsTable();
         timeRightNow = LocalDateTime.now();
         System.out.println(timeRightNow.format(TimeController.timestampFormatter) + "   Running the task every 10 seconds.");
-//        refreshAppointmentTableButton.fire();
 
     }
     public static void appointmentWithinFifteenMinutes(int appointmentInFifteen) {
@@ -129,11 +127,11 @@ public class MainUIController implements Initializable {
 //    }
 
     private void loadAppointmentFilterChoices() {
-        filterAppointmentsByChoiceBox.getItems().addAll("All", "Month", "Week", "Today", "My Appointments");
+        filterAppointmentsByChoiceBox.getItems().addAll("All", "Month", "Week", "Day", "Today", "My Appointments");
         filterAppointmentsByChoiceBox.getSelectionModel().selectFirst();
         appointmentFilterChoiceBoxChoice = filterAppointmentsByChoiceBox.getSelectionModel().getSelectedItem();
 
-        loadFilteredAppointmentsTable();
+//        loadFilteredAppointmentsTable();
     }
 
     private void loadAppointmentSearchFilterChoiceBoxChoices() {
@@ -141,7 +139,7 @@ public class MainUIController implements Initializable {
         searchAppointmentsByChoiceBox.getSelectionModel().selectFirst();
         searchAppointmentsByChoiceBoxChoice = searchAppointmentsByChoiceBox.getSelectionModel().getSelectedItem();
 
-        loadFilteredAppointmentsTable();
+//        loadFilteredAppointmentsTable();
     }
 
     private void loadCustomerChoiceBoxChoices() {
@@ -363,6 +361,33 @@ public class MainUIController implements Initializable {
             appointmentDatePickerField.setVisible(true);
         }
 
+        LocalDateTime selectedDate = LocalDateTime.now().minusDays(3);
+
+        if(appointmentDatePickerField.getValue() != null) {
+            selectedDate = LocalDateTime.of(appointmentDatePickerField.getValue(), LocalTime.now());
+        }
+
+        switch (appointmentFilterChoiceBoxChoice) {
+            case "All":
+                tableFilterLabel.setText("All Appointments");
+                break;
+            case "Month":
+                tableFilterLabel.setText(String.format("Appointments between %s - %s", TimeController.getFirstOfMonthDateTime(selectedDate).toLocalDate().format(TimeController.dateFormatter), TimeController.getLastOfMonthDateTime(selectedDate).toLocalDate().format(TimeController.dateFormatter)));
+                break;
+            case "Week":
+                tableFilterLabel.setText(String.format("Appointments between %s - %s", TimeController.getStartOfWeekDateTime(selectedDate).toLocalDate().format(TimeController.dateFormatter), TimeController.getEndOfWeekDateTime(selectedDate).toLocalDate().format(TimeController.dateFormatter)));
+                break;
+            case "Day":
+                tableFilterLabel.setText(String.format("Appointments on %s", TimeController.getStartOfDayDateTime(selectedDate).toLocalDate().format(TimeController.dateFormatter)));
+                break;
+            case "Today":
+                tableFilterLabel.setText("Appointments Today");
+                break;
+            case "My Appointments":
+                tableFilterLabel.setText("My Appointments");
+                break;
+        }
+
         loadFilteredAppointmentsTable();
     }
 
@@ -379,10 +404,8 @@ public class MainUIController implements Initializable {
         boolean isInList = false;
 
         if(searchAppointmentsByChoiceBoxChoice.equals("Contact")) {
-//            isInList = appointment.getContactID().contains(searchText);
             isInList = appointment.getContactName().toLowerCase().contains(searchText.toLowerCase());
-        }
-        else if(searchAppointmentsByChoiceBoxChoice.equals("Type")) {
+        } else if(searchAppointmentsByChoiceBoxChoice.equals("Type")) {
             isInList = appointment.getType().toLowerCase().contains(searchText.toLowerCase());
         }
 
@@ -391,7 +414,6 @@ public class MainUIController implements Initializable {
 
     public void loadFilteredAppointmentsTable() {
 //        NEW ---------------------------------------------------------------------------------------------------------------------------------------------------
-//        ObservableList<Appointment> appointmentsList = getAppointmentList();
         ObservableList<Appointment> appointmentsList = getAppointmentList();
         assert appointmentsList != null;
         FilteredList<Appointment> filteredAppointments = new FilteredList<>(appointmentsList);
@@ -416,7 +438,7 @@ public class MainUIController implements Initializable {
 
         try {
 //            return AppointmentsQuery.getAllAppointments(appointmentFilterChoiceBoxChoice, LocalDateTime.now());
-            return AppointmentsQuery.getAllAppointments(appointmentFilterChoiceBoxChoice, LocalDateTime.now(), dateTimeChosen);
+            return AppointmentsQuery.getAllAppointments(filterAppointmentsByChoiceBox.getValue(), LocalDateTime.now(), dateTimeChosen);
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -486,7 +508,6 @@ public class MainUIController implements Initializable {
 
     @FXML
     public void handleCustomerSearchFilterChoice() {
-//        customerSearchFilterChoiceBoxChoice = searchCustomersByChoiceBox.getSelectionModel().getSelectedItem();
         searchCustomersTextField.clear();
         loadFilteredCustomersTable();
     }
@@ -561,21 +582,13 @@ public class MainUIController implements Initializable {
                     @Override
                     public void updateItem(LocalDate date, boolean empty) {
                         super.updateItem(date, empty);
-                        LocalDate today = LocalDate.now();
-                        int offsetSeconds = TimeController.estOffSet.compareTo(TimeController.systemOffSet);
-                        LocalDateTime lastAppointmentSlotTimeToday = LocalDateTime.of(LocalDate.now(), LocalTime.of(21,45)).plusSeconds(offsetSeconds);
-                        LocalDateTime timeNow = LocalDateTime.now();
                         LocalDate tomorrow = LocalDate.now().plusDays(1);
-//                        LocalDate threeMonthsFromToday = LocalDate.now().plusWeeks(12);
-                        LocalDate ninetyDaysFromToday = LocalDate.now().plusDays(90);
-                        if(empty || date.isBefore(today) || date.isAfter(ninetyDaysFromToday) || date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY)  {
+                        LocalDate oneYearFromToday = LocalDate.now().plusYears(1);
+
+                        if(empty || date.isBefore(tomorrow) || date.isAfter(oneYearFromToday) || date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY)  {
                             setDisable(true);
                         }
 
-//                        automatically disables day if after last appointment slot time at 8:45 PM EST
-                        if(timeNow.isAfter(lastAppointmentSlotTimeToday) && date.isBefore(tomorrow)) {
-                            setDisable(true);
-                        }
                     }
                 };
             }
@@ -591,6 +604,24 @@ public class MainUIController implements Initializable {
 //            appointmentDatePickerField.
             System.out.println(dateChosen);
             loadFilteredAppointmentsTable();
+            LocalDateTime selectedDate = LocalDateTime.now().minusDays(3);
+
+            if(appointmentDatePickerField.getValue() != null) {
+                selectedDate = LocalDateTime.of(appointmentDatePickerField.getValue(), LocalTime.now());
+            }
+
+            switch (appointmentFilterChoiceBoxChoice) {
+                case "Month":
+                    tableFilterLabel.setText(String.format("Appointments between %s - %s", TimeController.getFirstOfMonthDateTime(selectedDate).toLocalDate().format(TimeController.dateFormatter), TimeController.getLastOfMonthDateTime(selectedDate).toLocalDate().format(TimeController.dateFormatter)));
+                    break;
+                case "Week":
+                    tableFilterLabel.setText(String.format("Appointments between %s - %s", TimeController.getStartOfWeekDateTime(selectedDate).toLocalDate().format(TimeController.dateFormatter), TimeController.getEndOfWeekDateTime(selectedDate).toLocalDate().format(TimeController.dateFormatter)));
+                    break;
+                case "Day":
+                    tableFilterLabel.setText(String.format("Appointments on %s", TimeController.getStartOfDayDateTime(selectedDate).toLocalDate().format(TimeController.dateFormatter)));
+                    break;
+            }
+
         });
     }
 

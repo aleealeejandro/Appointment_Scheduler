@@ -11,7 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class UserQuery {
-    public static ObservableList<User> getAllUsers() throws SQLException {
+    public static ObservableList<User> getAllUsers() {
         ObservableList<User> users = FXCollections.observableArrayList();
 
         try {
@@ -40,8 +40,7 @@ public class UserQuery {
             PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(query);
             ResultSet resultSet = preparedStatement.executeQuery();
             if(resultSet.next()) {
-                int userID = resultSet.getInt("User_ID");
-                return userID;
+                return resultSet.getInt("User_ID");
             } else {
                 return -1;
             }
@@ -51,7 +50,7 @@ public class UserQuery {
         }
     }
 
-    public static String getUserIDFromUserName(String userName) throws SQLException {
+    public static String getUserIDFromUserName(String userName) {
         try {
             String query = String.format("SELECT User_ID FROM client_schedule.users WHERE User_Name='%s'", userName);
             PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(query);
@@ -68,14 +67,13 @@ public class UserQuery {
         }
     }
 
-    public static String getUserNameFromUserID(int userId) throws SQLException {
+    public static String getUserNameFromUserID(int userId) {
         try {
             String query = String.format("SELECT User_Name FROM client_schedule.users WHERE User_ID=%s", userId);
             PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(query);
             ResultSet resultSet = preparedStatement.executeQuery();
             if(resultSet.next()) {
-                String userName = resultSet.getString("User_Name");
-                return userName;
+                return resultSet.getString("User_Name");
             } else {
                 return null;
             }
