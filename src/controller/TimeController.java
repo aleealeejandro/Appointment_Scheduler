@@ -2,7 +2,6 @@ package controller;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.IsoFields;
 import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.TemporalField;
 import java.time.temporal.WeekFields;
@@ -28,41 +27,22 @@ public class TimeController {
     public static int amountOfHoursOfficeIsOpen = 14;
     public static int minimumTimeDurationMinutes = 15;
     public static LocalDateTime openTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(8,0)).plusSeconds(offsetSecondsTotal);
-//    public static LocalDateTime closeTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(22,0)).plusSeconds(offsetSecondsTotal);
     public static LocalDateTime closeTime = openTime.plusHours(amountOfHoursOfficeIsOpen).plusSeconds(offsetSecondsTotal);
-//    public static LocalDateTime lastAppointmentSlotTimeToday = LocalDateTime.of(LocalDate.now(), LocalTime.of(21,45)).plusSeconds(offsetSecondsTotal);
     public static LocalDateTime lastAppointmentSlotTimeToday = closeTime.minusMinutes(15).plusSeconds(offsetSecondsTotal);
 
-    public static LocalDate startDate = openTime.toLocalDate();
-    public static LocalDate endDate = closeTime.toLocalDate();
-
-    //for month
-    public static YearMonth monthOfYear = YearMonth.of(startDate.getYear(), startDate.getMonth());
-    public static LocalDate firstDateOfMonth = monthOfYear.atDay( 1 );
-    public static LocalDate lastDateOfMonth = monthOfYear.atEndOfMonth();
-    public static LocalDateTime firstDateTimeOfMonth = LocalDateTime.of(firstDateOfMonth, openTime.toLocalTime());
-    public static LocalDateTime lastDateTimeOfMonth = LocalDateTime.of(lastDateOfMonth, closeTime.toLocalTime());
-    //for month
     public static LocalDateTime getFirstOfMonthDateTime(LocalDateTime dateTimeChosen) {
         YearMonth monthOfYear = YearMonth.of(dateTimeChosen.getYear(), dateTimeChosen.getMonth());
         LocalDate firstDateOfMonth = monthOfYear.atDay( 1 );
-        LocalDateTime firstDateTimeOfMonth = LocalDateTime.of(firstDateOfMonth, openTime.toLocalTime());
 
-        return firstDateTimeOfMonth;
+        return LocalDateTime.of(firstDateOfMonth, openTime.toLocalTime());
     }
 
     public static LocalDateTime getLastOfMonthDateTime(LocalDateTime dateTimeChosen) {
         YearMonth monthOfYear = YearMonth.of(dateTimeChosen.getYear(), dateTimeChosen.getMonth());
         LocalDate lastDateOfMonth = monthOfYear.atEndOfMonth();
-        LocalDateTime lastDateTimeOfMonth = LocalDateTime.of(lastDateOfMonth, closeTime.toLocalTime());
 
-        return lastDateTimeOfMonth;
+        return LocalDateTime.of(lastDateOfMonth, closeTime.toLocalTime());
     }
-
-
-    //    for week
-    public static TemporalField weekOfYear = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
-    public static int weekNumber = startDate.get(weekOfYear);
 
     public static LocalDateTime getStartOfWeekDateTime(LocalDateTime dateTimeChosen) {
         TemporalField wkOfYear = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
@@ -72,9 +52,7 @@ public class TimeController {
                 .with(wkOfYear, weekNum)
                 .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
 
-        LocalDateTime startOfWkDateTime = LocalDateTime.of(startOfWkDate, openTime.toLocalTime());
-
-        return startOfWkDateTime;
+        return LocalDateTime.of(startOfWkDate, openTime.toLocalTime());
     }
 
     public static LocalDateTime getEndOfWeekDateTime(LocalDateTime dateTimeChosen) {
@@ -85,16 +63,13 @@ public class TimeController {
                 .with(wkOfYear, weekNum)
                 .with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY));
 
-        LocalDateTime endOfWeekDateTime = LocalDateTime.of(endOfWeekDate, closeTime.toLocalTime());
-
-        return endOfWeekDateTime;
+        return LocalDateTime.of(endOfWeekDate, closeTime.toLocalTime());
     }
 
     public static LocalDateTime getStartOfDayDateTime(LocalDateTime dateTimeChosen) {
-        LocalDateTime startOfDayDateTime = LocalDateTime.of(dateTimeChosen.toLocalDate(), openTime.toLocalTime());
-        return startOfDayDateTime;
+        return LocalDateTime.of(dateTimeChosen.toLocalDate(), openTime.toLocalTime());
     }
-//
+
 //    public static LocalDateTime getEndOfDayDateTime(LocalDateTime dateTimeChosen) {
 //        LocalDateTime endOfDayDateTime = LocalDateTime.of(dateTimeChosen.toLocalDate(), openTime.toLocalTime());
 //        return endOfDayDateTime;
@@ -121,40 +96,21 @@ public class TimeController {
 
         return startDate;
     }
-    public static LocalDate startOfWeekDate = openTime.toLocalDate()
-//            .with(IsoFields.WEEK_OF_WEEK_BASED_YEAR, weekNumber)
-            .with(weekOfYear, weekNumber)
-            .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
 
-    public static LocalDateTime startOfWeekDateTime = LocalDateTime.of(startOfWeekDate, openTime.toLocalTime());
-
-    public static LocalDate endOfWeekDate = endDate
-            .with(weekOfYear, weekNumber)
-            .with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY));
-
-    public static LocalDateTime endOfWeekDateTime = LocalDateTime.of(endOfWeekDate, closeTime.toLocalTime());
-//    for week
-
-
-
-    public static LocalDateTime dateTimeNow = LocalDateTime.now();
-    public static LocalDate dateToday = LocalDate.now();
     public static LocalTime timeNow = LocalTime.now();
 
     public static LocalDateTime getUtcDatetime(LocalDateTime time) {
         OffsetDateTime sys =  time.atOffset(systemOffSet);
         ZonedDateTime zoned = sys.atZoneSameInstant(utcZoneID);
-        LocalDateTime utc = zoned.toLocalDateTime();
 
-        return utc;
+        return zoned.toLocalDateTime();
     }
 
     public static LocalDateTime getSystemDatetime(LocalDateTime time) {
         OffsetDateTime utc =  time.atOffset(utcOffSet);
         ZonedDateTime zoned = utc.atZoneSameInstant(systemZoneID);
-        LocalDateTime sys = zoned.toLocalDateTime();
 
-        return sys;
+        return zoned.toLocalDateTime();
     }
 
 }
