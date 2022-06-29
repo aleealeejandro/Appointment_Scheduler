@@ -96,6 +96,17 @@ public class MainUIController implements Initializable {
         disableEnableUpdateAndDeleteCustomerButtons();
         disableUpdateAndDeleteCustomerButtons();
         appointmentWithinFifteenMinutes(AppointmentsQuery.checkIfAppointmentWithinFifteenMinutes(LocalDateTime.now(), LocalDateTime.now().plusMinutes(15)));
+
+//        final int tenHourBreak = 10;
+//        final int maxHours = 24;
+//        final int hoursOpen = 14;
+//
+//        for(int i=0; i<=14; i++) {
+//            int hoursLeft = i;
+//            int hoursRight =
+//
+//            System.out.println(String.format(""));
+//        }
     }
 
     public static void getUserData(int id, String username) {

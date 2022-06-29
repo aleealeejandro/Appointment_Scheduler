@@ -35,6 +35,7 @@ public class AppointmentFormController implements Initializable {
     @FXML private ComboBox<String> contactsComboBox;
     @FXML private ComboBox<String> customersComboBox;
     @FXML private ComboBox<String> startTimesComboBox;
+//    @FXML private ComboBox<LocalDateTime> startTimesComboBox;
     private static Appointment appointment;
     private static LocalDate dateChosen;
     private static String userID;
@@ -42,6 +43,7 @@ public class AppointmentFormController implements Initializable {
     private static String timeDurationChoice;
     private static int duration;
     private LocalTime startTimeChosen;
+    private LocalDateTime startDateTimeChosen;
     private static String contactChosen;
     private static String customerChosen;
     private static String userChosen;
@@ -126,7 +128,9 @@ public class AppointmentFormController implements Initializable {
 
         timeDurationComboBox.getSelectionModel().select(duration + " minutes");
 
-        startTimesComboBox.getSelectionModel().select(appointment.getStartTime());
+        LocalTime appointmentStartTime = LocalTime.parse(appointment.getStartTime(), TimeController.timeFormatter);
+        LocalDateTime appointmentStart = LocalDateTime.of(appointment.getStartDate(), appointmentStartTime);
+        startTimesComboBox.getSelectionModel().select(appointmentStart.format(TimeController.dateTimeFormatter));
         handleStartTimeChoice();
 
         contactsComboBox.getSelectionModel().select(appointment.getContactID());
@@ -144,17 +148,30 @@ public class AppointmentFormController implements Initializable {
                     public void updateItem(LocalDate date, boolean empty) {
                         super.updateItem(date, empty);
                         LocalDate today = LocalDate.now();
-                        int offsetSeconds = TimeController.estOffSet.compareTo(TimeController.systemOffSet);
-                        LocalDateTime lastAppointmentSlotTimeToday = LocalDateTime.of(LocalDate.now(), LocalTime.of(21,45)).plusSeconds(offsetSeconds);
+//                        LocalDateTime estDateTime = TimeController.estTimeObject.toLocalDateTime();
+                        System.out.println("offset hours: " + (TimeController.offsetSecondsTotal/3600));
+                        LocalDateTime lastAppointmentSlotTimeToday = TimeController.lastAppointmentSlotTimeToday;
                         LocalDateTime timeNow = LocalDateTime.now();
                         LocalDate tomorrow = LocalDate.now().plusDays(1);
-//                        LocalDate ninetyDaysFromToday = LocalDate.now().plusDays(90);
-//                        LocalDate sixMonthsFromToday = LocalDate.now().plusMonths(6);
                         LocalDate oneYearFromToday = LocalDate.now().plusYears(1);
+                        int offsetHours = TimeController.offsetSecondsTotal/3600;
 
-                        if(empty || date.isBefore(today) || date.isAfter(oneYearFromToday) || date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY)  {
-                            setDisable(true);
+                        if(offsetHours >= 16) {
+                            if(empty || date.isBefore(today) || date.isAfter(oneYearFromToday) || date.getDayOfWeek() == DayOfWeek.SUNDAY || date.getDayOfWeek() == DayOfWeek.MONDAY)  {
+                                setDisable(true);
+                            }
+                        } else if(offsetHours >= 3) {
+                            if(empty || date.isBefore(today) || date.isAfter(oneYearFromToday) || date.getDayOfWeek() == DayOfWeek.SUNDAY)  {
+                                setDisable(true);
+                            }
+                        } else {
+                            if(empty || date.isBefore(today) || date.isAfter(oneYearFromToday) || date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY)  {
+                                setDisable(true);
+                            }
                         }
+//                        if(empty || date.isBefore(today) || date.isAfter(oneYearFromToday) || date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY)  {
+//                            setDisable(true);
+//                        }
 
 //                        automatically disables day if after last appointment slot time at 8:45 PM EST
                         if(timeNow.isAfter(lastAppointmentSlotTimeToday) && date.isBefore(tomorrow)) {
@@ -172,7 +189,6 @@ public class AppointmentFormController implements Initializable {
 
         datePickerField.setDayCellFactory(dayCellFactory);
     }
-
 
 //    public void disableDatesOnDatePicker() {
 //        datePickerField.setDayCellFactory(datePicker -> new DateCell() {
@@ -195,10 +211,25 @@ public class AppointmentFormController implements Initializable {
         LocalDate oneYearFromNow = date.plusYears(1);
 
         while(!date.isEqual(oneYearFromNow)) {
+            int offsetHours = TimeController.offsetSecondsTotal/3600;
 
-            if(date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY) {
-                date = date.plusDays(1);
-                continue;
+            if(offsetHours >= 16) {
+                if(date.getDayOfWeek() == DayOfWeek.SUNDAY || date.getDayOfWeek() == DayOfWeek.MONDAY) {
+                    date = date.plusDays(1);
+                    continue;
+                }
+            }
+            else if(offsetHours >= 3) {
+                if(date.getDayOfWeek() == DayOfWeek.SUNDAY) {
+                    date = date.plusDays(1);
+                    continue;
+                }
+            }
+            else {
+                if(date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY) {
+                    date = date.plusDays(1);
+                    continue;
+                }
             }
 
             boolean fifteenMinuteSlotIsNotAvailable = timeSlotsAvailable(date, TimeController.minimumTimeDurationMinutes);
@@ -210,8 +241,6 @@ public class AppointmentFormController implements Initializable {
 
             date = date.plusDays(1);
         }
-
-
     }
 
     public LocalDate nextDateAvailable() {
@@ -221,7 +250,6 @@ public class AppointmentFormController implements Initializable {
         LocalDateTime timeNow = LocalDateTime.now();
         LocalDate tomorrow = LocalDate.now().plusDays(1);
         LocalDate oneYearFromNow = timeNow.plusYears(1).toLocalDate();
-
 
         while(startDate.isBefore(oneYearFromNow)) {
 //        while(true) {
@@ -235,9 +263,27 @@ public class AppointmentFormController implements Initializable {
                 continue;
             }
 
-            if(startDate.getDayOfWeek() != DayOfWeek.SATURDAY && startDate.getDayOfWeek() != DayOfWeek.SUNDAY) {
-                break;
+            int offsetHours = TimeController.offsetSecondsTotal/3600;
+
+            if(offsetHours >= 16) {
+                if(startDate.getDayOfWeek() != DayOfWeek.SUNDAY && startDate.getDayOfWeek() != DayOfWeek.MONDAY) {
+                    break;
+                }
             }
+            else if(offsetHours >= 3) {
+                if(startDate.getDayOfWeek() != DayOfWeek.SUNDAY) {
+                    break;
+                }
+            }
+            else {
+                if(startDate.getDayOfWeek() != DayOfWeek.SATURDAY && startDate.getDayOfWeek() != DayOfWeek.SUNDAY) {
+                    break;
+                }
+            }
+
+//            if(startDate.getDayOfWeek() != DayOfWeek.SATURDAY && startDate.getDayOfWeek() != DayOfWeek.SUNDAY) {
+//                break;
+//            }
 
             startDate = startDate.plusDays(1);
         }
@@ -250,9 +296,7 @@ public class AppointmentFormController implements Initializable {
             datePickerField.setValue(newValue);
             dateChosen = datePickerField.getValue();
             loadTimeDurationComboBox();
-//            timeDurationComboBox.getSelectionModel().selectFirst();
             loadStartTimesComboBox();
-//            startTimesComboBox.getSelectionModel().selectFirst();
 
             handleStartTimeChoice();
         });
@@ -342,7 +386,33 @@ public class AppointmentFormController implements Initializable {
         LocalDateTime endOfAppointment;
 
         startTimesComboBox.getItems().clear();
-        ObservableList<Appointment> setTimeSlots = AppointmentsQuery.getAppointmentsForDay(startDateTime, endDateTime);
+
+        int offsetHours = TimeController.offsetSecondsTotal/3600;
+        LocalDateTime secondShiftBeginning = LocalDateTime.of(dateChosen, TimeController.openTime.toLocalTime());
+        LocalDateTime secondShiftEnding = LocalDateTime.of(dateChosen.plusDays(1), LocalTime.of(0, 0));
+
+        LocalDateTime breakBeginning = secondShiftBeginning.minusHours(TimeController.amountOfHoursOfficeIsClosed);
+        LocalDateTime breakEnding = secondShiftBeginning;
+
+        LocalDateTime firstShiftBeginning = LocalDateTime.of(dateChosen, LocalTime.of(0, 0));
+        LocalDateTime firstShiftEnding = breakBeginning;
+
+        if(offsetHours >= 3 && offsetHours <= 15) {
+            if (dateChosen.getDayOfWeek().equals(DayOfWeek.MONDAY)) {
+                startOfAppointment = secondShiftBeginning;
+                endDateTime = secondShiftEnding;
+            } else if (dateChosen.getDayOfWeek().equals(DayOfWeek.SATURDAY)) {
+                startOfAppointment = firstShiftBeginning;
+                endDateTime = firstShiftEnding;
+            } else {
+                startOfAppointment = firstShiftBeginning;
+                endDateTime = secondShiftEnding;
+            }
+
+            System.out.printf("\nfirstShiftBeginning: %s\nfirstShiftEnding: %s\nbreakBeginning: %s\nbreakEnding: %s\nsecondShiftBeginning: %s\nsecondShiftEnding: %s\n%n", firstShiftBeginning, firstShiftEnding, breakBeginning, breakEnding, secondShiftBeginning, secondShiftEnding);
+        }
+
+        ObservableList<Appointment> setTimeSlots = AppointmentsQuery.getAppointmentsForDay(startOfAppointment, endDateTime);
         assert setTimeSlots != null;
 
         if(setTimeSlots.size() > 0) {
@@ -359,10 +429,33 @@ public class AppointmentFormController implements Initializable {
                     continue;
                 }
 
+                boolean notDuringBreak = true;
+
+                if(offsetHours >= 3 && offsetHours <= 15) {
+                    assert dateChosen != null;
+                    if(!dateChosen.getDayOfWeek().equals(DayOfWeek.MONDAY) && !dateChosen.getDayOfWeek().equals(DayOfWeek.SATURDAY)) {
+                        if(startOfAppointment.isEqual(breakBeginning)) {
+                            notDuringBreak = false;
+                        } else if(startOfAppointment.isAfter(breakBeginning) && startOfAppointment.isBefore(breakEnding)) {
+                            notDuringBreak = false;
+                        } else if(endOfAppointment.isEqual(breakEnding)) {
+                            notDuringBreak = false;
+                        } else if(endOfAppointment.isAfter(breakBeginning) && endOfAppointment.isBefore(breakEnding)) {
+                            notDuringBreak = false;
+                        }
+                    }
+                }
+
+                if(!notDuringBreak) {
+                    System.out.println("during break bro");
+                    startOfAppointment = startOfAppointment.plusMinutes(TimeController.minimumTimeDurationMinutes);
+                    continue;
+                }
+
                 boolean appointmentExistsAlreadyOrOverlaps = AppointmentsQuery.appointmentOverlapsOrExists(startOfAppointment, endOfAppointment);
 
                 if(!appointmentExistsAlreadyOrOverlaps) {
-                    startTimesComboBox.getItems().add(startOfAppointment.format(TimeController.timeFormatter));
+                    startTimesComboBox.getItems().add(startOfAppointment.format(TimeController.dateTimeFormatter));
                 }
 
                 startOfAppointment = startOfAppointment.plusMinutes(TimeController.minimumTimeDurationMinutes);
@@ -373,12 +466,36 @@ public class AppointmentFormController implements Initializable {
                     break;
                 }
 
+                endOfAppointment = startOfAppointment.plusMinutes(duration).minusMinutes(1);
+
                 if(startOfAppointment.isBefore(oneHourFromNow) && dateChosen != null && dateChosen.equals(LocalDate.now())) {
                     startOfAppointment = startOfAppointment.plusMinutes(TimeController.minimumTimeDurationMinutes);
                     continue;
                 }
 
-                startTimesComboBox.getItems().add(startOfAppointment.format(TimeController.timeFormatter));
+                boolean notDuringBreak = true;
+
+                if(offsetHours >= 3 && offsetHours <= 15) {
+                    assert dateChosen != null;
+                    if(!dateChosen.getDayOfWeek().equals(DayOfWeek.MONDAY) && !dateChosen.getDayOfWeek().equals(DayOfWeek.SATURDAY)) {
+                        if(startOfAppointment.isEqual(breakBeginning)) {
+                            notDuringBreak = false;
+                        } else if(startOfAppointment.isAfter(breakBeginning) && startOfAppointment.isBefore(breakEnding)) {
+                            notDuringBreak = false;
+                        } else if(endOfAppointment.isEqual(breakEnding)) {
+                            notDuringBreak = false;
+                        } else if(endOfAppointment.isAfter(breakBeginning) && endOfAppointment.isBefore(breakEnding)) {
+                            notDuringBreak = false;
+                        }
+                    }
+                }
+
+                if(!notDuringBreak) {
+                    startOfAppointment = startOfAppointment.plusMinutes(TimeController.minimumTimeDurationMinutes);
+                    continue;
+                }
+
+                startTimesComboBox.getItems().add(startOfAppointment.format(TimeController.dateTimeFormatter));
 
                 startOfAppointment = startOfAppointment.plusMinutes(TimeController.minimumTimeDurationMinutes);
             }
@@ -390,9 +507,17 @@ public class AppointmentFormController implements Initializable {
 
     @FXML
     public void handleStartTimeChoice() {
-        String timeString = startTimesComboBox.getSelectionModel().getSelectedItem();
-        if(timeString != null) {
-            startTimeChosen = LocalTime.parse(timeString, TimeController.timeFormatter);
+//        String timeString = startTimesComboBox.getSelectionModel().getSelectedItem();
+//        if(timeString != null) {
+//            startTimeChosen = LocalTime.parse(timeString, TimeController.timeFormatter);
+//        }
+//        LocalDateTime appointmentStart = startTimesComboBox.getSelectionModel().getSelectedItem();
+//        if(appointmentStart != null) {
+//            startDateTimeChosen = appointmentStart;
+//        }
+        String appointmentStart = startTimesComboBox.getSelectionModel().getSelectedItem();
+        if(appointmentStart != null) {
+            startDateTimeChosen = LocalDateTime.parse(appointmentStart, TimeController.dateTimeFormatter);
         }
     }
 
@@ -464,11 +589,15 @@ public class AppointmentFormController implements Initializable {
         if(!fieldsEmpty) {
             // turn to utc in backend
             assert startTimeChosen != null;
-            String endTime = startTimeChosen.plusMinutes(duration).minusSeconds(1).format(TimeController.timeFormatter);
-            LocalDate startDate = datePickerField.getValue();
-            LocalDateTime startDateTime = LocalDateTime.of(startDate, startTimeChosen);
-            LocalDateTime endDateTime = startDateTime.plusMinutes(duration);
-            LocalDate endDate = endDateTime.toLocalDate();
+            LocalDateTime appointmentStartDateTime = LocalDateTime.parse(startTimesComboBox.getSelectionModel().getSelectedItem(), TimeController.dateTimeFormatter);
+            LocalDateTime appointmentEndDateTime = appointmentStartDateTime.plusMinutes(duration).minusMinutes(1);
+//            String endTime = appointmentStartDateTime.plusMinutes(duration).minusSeconds(1).format(TimeController.timeFormatter);
+//            LocalDate startDate = appointmentStartDateTime.toLocalDate();
+//            LocalDateTime startDateTime = LocalDateTime.of(startDate, startTimeChosen);
+//            LocalDateTime startDateTime = LocalDateTime.parse(startTimeChosen, TimeController.dateTimeFormatter);
+//            startOfAppointment.format(TimeController.timeFormatter)
+//            LocalDateTime endDateTime = startDateTime.plusMinutes(duration);
+//            LocalDate endDate = endDateTime.toLocalDate();
 
             Appointment newAppointment = new Appointment(
                     appointmentIDTextField.getText(),
@@ -476,10 +605,14 @@ public class AppointmentFormController implements Initializable {
                     descriptionTextField.getText(),
                     locationTextField.getText(),
                     typeTextField.getText(),
-                    datePickerField.getValue(),
-                    startTimeChosen.format(TimeController.timeFormatter),
-                    endDate,
-                    endTime,
+                    appointmentStartDateTime.toLocalDate(),
+//                    datePickerField.getValue(),
+//                    startTimeChosen.format(TimeController.timeFormatter),
+//                    endDate,
+//                    endTime,
+                    appointmentStartDateTime.toLocalTime().format(TimeController.timeFormatter),
+                    appointmentEndDateTime.toLocalDate(),
+                    appointmentEndDateTime.toLocalTime().format(TimeController.timeFormatter),
                     customersComboBox.getSelectionModel().getSelectedItem(),
                     userIDComboBox.getSelectionModel().getSelectedItem(),
                     contactsComboBox.getSelectionModel().getSelectedItem()

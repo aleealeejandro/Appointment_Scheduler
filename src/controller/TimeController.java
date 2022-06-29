@@ -11,6 +11,7 @@ public class TimeController {
     public static DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm a");
     public static DateTimeFormatter timestampFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     public static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+    public static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm a MM/dd/yy");
     public static ZoneId estZoneID = ZoneId.of("America/New_York");
 
     public static ZoneId systemZoneID = ZoneId.systemDefault();
@@ -25,8 +26,10 @@ public class TimeController {
 
     public static int offsetSecondsTotal = estOffSet.compareTo(systemOffSet);
     public static int amountOfHoursOfficeIsOpen = 14;
+    public static int amountOfHoursOfficeIsClosed = 10;
     public static int minimumTimeDurationMinutes = 15;
-    public static LocalDateTime openTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(8,0)).plusSeconds(offsetSecondsTotal);
+//    public static LocalDateTime openTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(8,0)).plusSeconds(offsetSecondsTotal);
+    public static LocalDateTime openTime = LocalDateTime.of(estTimeObject.toLocalDate(), LocalTime.of(8,0)).plusSeconds(offsetSecondsTotal);
     public static LocalDateTime closeTime = openTime.plusHours(amountOfHoursOfficeIsOpen).plusSeconds(offsetSecondsTotal);
     public static LocalDateTime lastAppointmentSlotTimeToday = closeTime.minusMinutes(15).plusSeconds(offsetSecondsTotal);
 
@@ -102,6 +105,10 @@ public class TimeController {
     public static LocalDateTime getUtcDatetime(LocalDateTime time) {
         OffsetDateTime sys =  time.atOffset(systemOffSet);
         ZonedDateTime zoned = sys.atZoneSameInstant(utcZoneID);
+        System.out.println("\ntime in getUtcDatetime() TimeController: " + time);
+        System.out.println("sys in getUtcDatetime() TimeController: " + sys);
+        System.out.println("zoned in getUtcDatetime() TimeController: " + zoned);
+        System.out.println("zoned.toLocalDateTime() in getUtcDatetime() TimeController: " + zoned.toLocalDateTime() + "\n");
 
         return zoned.toLocalDateTime();
     }

@@ -96,8 +96,12 @@ public class AppointmentsQuery {
 
     public static boolean appointmentOverlapsOrExists(LocalDateTime startDatetime, LocalDateTime endDatetime) {
 //        change from SYSTEM to UTC LocalDateTime
+        System.out.println("\nstartDatetime before utc" + startDatetime);
+        System.out.println("endDatetime before utc" + endDatetime);
         startDatetime = TimeController.getUtcDatetime(startDatetime);
         endDatetime = TimeController.getUtcDatetime(endDatetime);
+        System.out.println("startDatetime after utc" + startDatetime);
+        System.out.println("endDatetime after utc" + endDatetime + "\n");
         String startDatetimeString = startDatetime.format(TimeController.timestampFormatter);
         String endDatetimeString = endDatetime.format(TimeController.timestampFormatter);
         String query = "SELECT COUNT(Appointment_ID) FROM client_schedule.appointments WHERE (Start <= ? AND End >= ?) OR (Start <= ? AND End >= ?);";
