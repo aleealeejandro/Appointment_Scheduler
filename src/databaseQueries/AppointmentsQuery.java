@@ -97,23 +97,18 @@ public class AppointmentsQuery {
         endDatetime = TimeController.getUtcDatetime(endDatetime);
         String startDatetimeString = startDatetime.format(TimeController.timestampFormatter);
         String endDatetimeString = endDatetime.format(TimeController.timestampFormatter);
-//        String query = "SELECT COUNT(Appointment_ID) FROM client_schedule.appointments WHERE (Start <= ? AND End >= ?) OR (Start <= ? AND End >= ?) OR (Start Between ? AND ?) OR (END Between ? AND ?);";
-        String query = "SELECT COUNT(Appointment_ID) FROM client_schedule.appointments WHERE (Start Between ? AND ?) OR (END Between ? AND ?);";
+        String query = "SELECT COUNT(Appointment_ID) FROM client_schedule.appointments WHERE (Start <= ? AND End >= ?) OR (Start <= ? AND End >= ?) OR (Start Between ? AND ?) OR (END Between ? AND ?);";
 
         try {
             PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(query);
             preparedStatement.setString(1, startDatetimeString);
-            preparedStatement.setString(2, endDatetimeString);
-            preparedStatement.setString(3, startDatetimeString);
+            preparedStatement.setString(2, startDatetimeString);
+            preparedStatement.setString(3, endDatetimeString);
             preparedStatement.setString(4, endDatetimeString);
-//            preparedStatement.setString(1, startDatetimeString);
-//            preparedStatement.setString(2, startDatetimeString);
-//            preparedStatement.setString(3, endDatetimeString);
-//            preparedStatement.setString(4, endDatetimeString);
-//            preparedStatement.setString(5, startDatetimeString);
-//            preparedStatement.setString(6, endDatetimeString);
-//            preparedStatement.setString(7, startDatetimeString);
-//            preparedStatement.setString(8, endDatetimeString);
+            preparedStatement.setString(5, startDatetimeString);
+            preparedStatement.setString(6, endDatetimeString);
+            preparedStatement.setString(7, startDatetimeString);
+            preparedStatement.setString(8, endDatetimeString);
             ResultSet resultSet = preparedStatement.executeQuery();
             int count = 0;
 

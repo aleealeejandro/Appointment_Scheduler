@@ -151,17 +151,20 @@
                             <Insets bottom="5.0" left="10.0" right="5.0" top="5.0"/>
                         </GridPane.margin>
                     </ComboBox>
-                    <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="8" fx:id="contactsComboBox" onAction="#handleContactChoice">
+<!--                    <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="8" fx:id="contactsComboBox" onAction="#handleContactChoice">-->
+                    <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="8" fx:id="contactsComboBox">
                         <GridPane.margin>
                             <Insets bottom="5.0" left="10.0" right="10.0" top="5.0"/>
                         </GridPane.margin>
                     </ComboBox>
-                    <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="9" fx:id="customersComboBox" onAction="#handleCustomerChoice">
+<!--                    <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="9" fx:id="customersComboBox" onAction="#handleCustomerChoice">-->
+                    <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="9" fx:id="customersComboBox">
                         <GridPane.margin>
                             <Insets bottom="5.0" left="10.0" right="10.0" top="5.0"/>
                         </GridPane.margin>
                     </ComboBox>
-                    <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="10" fx:id="userIDComboBox" onAction="#handleUserChoice">
+<!--                    <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="10" fx:id="userIDComboBox" onAction="#handleUserChoice">-->
+                    <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="10" fx:id="userIDComboBox">
                         <GridPane.margin>
                             <Insets bottom="5.0" left="10.0" right="10.0" top="5.0"/>
                         </GridPane.margin>
