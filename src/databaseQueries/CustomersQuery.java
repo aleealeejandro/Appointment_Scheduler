@@ -1,18 +1,13 @@
 package databaseQueries;
 
-import controller.MainUIController;
-import controller.TimeController;
 import helper.JDBC;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import model.Appointment;
-import model.Country;
 import model.Customer;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
@@ -20,21 +15,23 @@ public class CustomersQuery {
 
     public static ObservableList<Customer> getAllCustomersByDivision(String country, String division) throws SQLException {
         ObservableList<Customer> customers = FXCollections.observableArrayList();
-        String query = "SELECT Customer_ID, Customer_Name, Address, Postal_Code, Phone, Division_ID FROM client_schedule.customers;";
+        String query;
+//        String query = "SELECT Customer_ID, Customer_Name, Address, Postal_Code, Phone, Division_ID FROM client_schedule.customers;";
 
         if(country.equals("All")) {
             query = "SELECT Customer_ID, Customer_Name, Address, Postal_Code, Phone, customers.Division_ID " +
                     "FROM client_schedule.customers AS customers " +
                     "   INNER JOIN client_schedule.first_level_divisions AS divisions ON customers.Division_ID = divisions.Division_ID " +
                     "   INNER JOIN client_schedule.countries AS countries ON countries.Country_ID = divisions.Country_ID " +
-                    "ORDER BY Country;";
+                    "ORDER BY Customer_Name;";
+//                    "ORDER BY Customer_Name;";
         }
         else {
             if(division == null || division.equals("All")) {
-                query = String.format("SELECT Customer_ID, Customer_Name, Address, Postal_Code, Phone, customers.Division_ID FROM client_schedule.customers AS customers INNER JOIN client_schedule.first_level_divisions AS divisions ON customers.Division_ID = divisions.Division_ID INNER JOIN client_schedule.countries AS countries ON countries.Country_ID = divisions.Country_ID WHERE countries.Country='%s' ORDER BY Division;", country);
+                query = String.format("SELECT Customer_ID, Customer_Name, Address, Postal_Code, Phone, customers.Division_ID FROM client_schedule.customers AS customers INNER JOIN client_schedule.first_level_divisions AS divisions ON customers.Division_ID = divisions.Division_ID INNER JOIN client_schedule.countries AS countries ON countries.Country_ID = divisions.Country_ID WHERE countries.Country='%s' ORDER BY Customer_Name;", country);
             }
             else {
-                query = String.format("SELECT Customer_ID, Customer_Name, Address, Postal_Code, Phone, customers.Division_ID FROM client_schedule.customers AS customers INNER JOIN client_schedule.first_level_divisions AS divisions ON customers.Division_ID = divisions.Division_ID INNER JOIN client_schedule.countries AS countries ON countries.Country_ID = divisions.Country_ID WHERE countries.Country='%s' AND divisions.Division='%s' ORDER BY Division;", country, division);
+                query = String.format("SELECT Customer_ID, Customer_Name, Address, Postal_Code, Phone, customers.Division_ID FROM client_schedule.customers AS customers INNER JOIN client_schedule.first_level_divisions AS divisions ON customers.Division_ID = divisions.Division_ID INNER JOIN client_schedule.countries AS countries ON countries.Country_ID = divisions.Country_ID WHERE countries.Country='%s' AND divisions.Division='%s' ORDER BY Customer_Name;", country, division);
             }
         }
 
@@ -60,7 +57,7 @@ public class CustomersQuery {
         }
     }
 
-    public static ObservableList<Customer> getAllCustomers() throws SQLException {
+    public static ObservableList<Customer> getAllCustomers() {
         ObservableList<Customer> customers = FXCollections.observableArrayList();
 
         try {
@@ -125,12 +122,10 @@ public class CustomersQuery {
             PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(query);
             int addedBoolean = preparedStatement.executeUpdate();
 
-            if(addedBoolean == 1){
-                return true;
-            }
-            return false;
+            return addedBoolean == 1;
         } catch (SQLException | RuntimeException err) {
-            System.out.println(err);
+//            System.out.println(err);
+            err.printStackTrace();
             return false;
         }
     }
@@ -151,28 +146,24 @@ public class CustomersQuery {
             PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(query);
             int updatedBoolean = preparedStatement.executeUpdate();
 
-            if(updatedBoolean == 1){
-                return true;
-            }
-            return false;
+            return updatedBoolean == 1;
         } catch (SQLException | RuntimeException err) {
-            System.out.println(err);
+//            System.out.println(err);
+            err.printStackTrace();
             return false;
         }
     }
 
-    public static boolean deleteCustomer(String customerID) throws SQLException {
+    public static boolean deleteCustomer(String customerID) {
         String query = String.format("DELETE FROM client_schedule.customers WHERE Customer_ID=%s", customerID);
         try {
             PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(query);
             int deleteBool = preparedStatement.executeUpdate();
 
-            if(deleteBool == 1){
-                return true;
-            }
-            return false;
+            return deleteBool == 1;
         } catch (SQLException | RuntimeException err) {
-            System.out.println(err);
+//            System.out.println(err);
+            err.printStackTrace();
             return false;
         }
     }

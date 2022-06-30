@@ -12,7 +12,7 @@ public class TimeController {
     public static DateTimeFormatter timestampFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     public static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
     public static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm a MM/dd/yy");
-    public static ZoneId estZoneID = ZoneId.of("America/New_York");
+    private static final ZoneId estZoneID = ZoneId.of("America/New_York");
 
     public static ZoneId systemZoneID = ZoneId.systemDefault();
     public static ZoneId utcZoneID = ZoneId.of("UTC");
@@ -28,7 +28,6 @@ public class TimeController {
     public static int amountOfHoursOfficeIsOpen = 14;
     public static int amountOfHoursOfficeIsClosed = 10;
     public static int minimumTimeDurationMinutes = 15;
-//    public static LocalDateTime openTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(8,0)).plusSeconds(offsetSecondsTotal);
     public static LocalDateTime openTime = LocalDateTime.of(estTimeObject.toLocalDate(), LocalTime.of(8,0)).plusSeconds(offsetSecondsTotal);
     public static LocalDateTime closeTime = openTime.plusHours(amountOfHoursOfficeIsOpen).plusSeconds(offsetSecondsTotal);
     public static LocalDateTime lastAppointmentSlotTimeToday = closeTime.minusMinutes(15).plusSeconds(offsetSecondsTotal);
@@ -50,48 +49,124 @@ public class TimeController {
     public static LocalDateTime getStartOfWeekDateTime(LocalDateTime dateTimeChosen) {
         TemporalField wkOfYear = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
         int weekNum = dateTimeChosen.get(wkOfYear);
+        LocalDate startOfWkDate;
+        int offsetHours = offsetSecondsTotal/3600;
+        LocalDateTime startOfWeekDateTime;
+        LocalDateTime openingTime;
 
-        LocalDate startOfWkDate = dateTimeChosen.toLocalDate()
-                .with(wkOfYear, weekNum)
-                .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        if(offsetHours >= 16) {
+            startOfWkDate = dateTimeChosen.toLocalDate()
+                    .with(wkOfYear, weekNum)
+                    .with(TemporalAdjusters.previousOrSame(DayOfWeek.TUESDAY));
+        } else {
+            startOfWkDate = dateTimeChosen.toLocalDate()
+                    .with(wkOfYear, weekNum)
+                    .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        }
 
-        return LocalDateTime.of(startOfWkDate, openTime.toLocalTime());
+        startOfWeekDateTime = LocalDateTime.of(startOfWkDate, LocalTime.now());
+        openingTime = getOpenOrCloseTime(startOfWeekDateTime, true);
+
+        return openingTime;
     }
 
     public static LocalDateTime getEndOfWeekDateTime(LocalDateTime dateTimeChosen) {
         TemporalField wkOfYear = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
         int weekNum = dateTimeChosen.get(wkOfYear);
 
-        LocalDate endOfWeekDate = dateTimeChosen.toLocalDate()
-                .with(wkOfYear, weekNum)
-                .with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY));
+        LocalDate endOfWeekDate;
+        LocalDateTime endOfWeekDateTime;
+        int offsetHours = offsetSecondsTotal/3600;
+        LocalDateTime closingTime;
 
-        return LocalDateTime.of(endOfWeekDate, closeTime.toLocalTime());
+        if(offsetHours >= 3) {
+            endOfWeekDate = dateTimeChosen.toLocalDate()
+                    .with(wkOfYear, weekNum)
+                    .with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
+
+            endOfWeekDateTime = LocalDateTime.of(endOfWeekDate, LocalTime.now());
+            closingTime = getOpenOrCloseTime(endOfWeekDateTime, false);
+        } else {
+            endOfWeekDate = dateTimeChosen.toLocalDate()
+                    .with(wkOfYear, weekNum)
+                    .with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY));
+
+            closingTime = LocalDateTime.of(endOfWeekDate, closeTime.toLocalTime());
+        }
+
+        return closingTime;
     }
 
-    public static LocalDateTime getStartOfDayDateTime(LocalDateTime dateTimeChosen) {
-        return LocalDateTime.of(dateTimeChosen.toLocalDate(), openTime.toLocalTime());
-    }
+    public static LocalDateTime getOpenOrCloseTime(LocalDateTime dateTimeChosen, boolean gettingOpenTime) {
+        int offsetHours = offsetSecondsTotal/3600;
+        LocalDate dateChosen = dateTimeChosen.toLocalDate();
+        LocalDateTime secondShiftBeginning = LocalDateTime.of(dateChosen, openTime.toLocalTime());
+        LocalDateTime secondShiftEnding = LocalDateTime.of(dateChosen.plusDays(1), LocalTime.of(0, 0));
 
-//    public static LocalDateTime getEndOfDayDateTime(LocalDateTime dateTimeChosen) {
-//        LocalDateTime endOfDayDateTime = LocalDateTime.of(dateTimeChosen.toLocalDate(), openTime.toLocalTime());
-//        return endOfDayDateTime;
-//    }
+        LocalDateTime breakBeginning = secondShiftBeginning.minusHours(amountOfHoursOfficeIsClosed);
+        LocalDateTime breakEnding = secondShiftBeginning;
+
+        LocalDateTime firstShiftBeginning = LocalDateTime.of(dateChosen, LocalTime.of(0, 0));
+        LocalDateTime firstShiftEnding = breakBeginning;
+
+        LocalDateTime startOfDay;
+        LocalDateTime endOfDay;
+
+        if(offsetHours >= 3 && offsetHours <= 15) {
+            if (dateChosen.getDayOfWeek().equals(DayOfWeek.MONDAY)) {
+                startOfDay = secondShiftBeginning;
+                endOfDay = secondShiftEnding;
+            } else if (dateChosen.getDayOfWeek().equals(DayOfWeek.SATURDAY)) {
+                startOfDay = firstShiftBeginning;
+                endOfDay = firstShiftEnding;
+            } else {
+                startOfDay = firstShiftBeginning;
+                endOfDay = secondShiftEnding;
+            }
+        } else {
+            startOfDay = LocalDateTime.of(dateTimeChosen.toLocalDate(), openTime.toLocalTime());
+            endOfDay = startOfDay.plusHours(amountOfHoursOfficeIsOpen);
+        }
+
+        if(gettingOpenTime) {
+            return startOfDay;
+        }
+        return endOfDay;
+    }
 
     public static LocalDate nextDateAvailable() {
-        LocalDateTime startDatetime = openTime;
+        LocalDateTime startDatetime = TimeController.openTime;
         LocalDate startDate = startDatetime.toLocalDate();
         LocalDateTime timeNow = LocalDateTime.now();
+        LocalDateTime lastAppointmentSlotTimeToday = getOpenOrCloseTime(timeNow, false);
         LocalDate tomorrow = LocalDate.now().plusDays(1);
+        LocalDate oneYearFromNow = timeNow.plusYears(1).toLocalDate();
 
-        while(true) {
+        while(startDate.isBefore(oneYearFromNow)) {
+            if(startDate.isBefore(tomorrow)) {
+                startDate = startDate.plusDays(1);
+                continue;
+            }
+
             if(timeNow.isAfter(lastAppointmentSlotTimeToday) && startDate.isBefore(tomorrow)) {
                 startDate = startDate.plusDays(1);
                 continue;
             }
 
-            if(startDate.getDayOfWeek() != DayOfWeek.SATURDAY && startDate.getDayOfWeek() != DayOfWeek.SUNDAY) {
-                break;
+            int offsetHours = TimeController.offsetSecondsTotal/3600;
+
+            if(offsetHours >= 16) {
+                if(startDate.getDayOfWeek() != DayOfWeek.SUNDAY && startDate.getDayOfWeek() != DayOfWeek.MONDAY) {
+                    break;
+                }
+            } else if(offsetHours >= 3) {
+                if(startDate.getDayOfWeek() != DayOfWeek.SUNDAY) {
+                    break;
+                }
+            } else {
+                if(startDate.getDayOfWeek() != DayOfWeek.SATURDAY && startDate.getDayOfWeek() != DayOfWeek.SUNDAY) {
+                    break;
+                }
             }
 
             startDate = startDate.plusDays(1);
@@ -100,15 +175,9 @@ public class TimeController {
         return startDate;
     }
 
-    public static LocalTime timeNow = LocalTime.now();
-
     public static LocalDateTime getUtcDatetime(LocalDateTime time) {
         OffsetDateTime sys =  time.atOffset(systemOffSet);
         ZonedDateTime zoned = sys.atZoneSameInstant(utcZoneID);
-        System.out.println("\ntime in getUtcDatetime() TimeController: " + time);
-        System.out.println("sys in getUtcDatetime() TimeController: " + sys);
-        System.out.println("zoned in getUtcDatetime() TimeController: " + zoned);
-        System.out.println("zoned.toLocalDateTime() in getUtcDatetime() TimeController: " + zoned.toLocalDateTime() + "\n");
 
         return zoned.toLocalDateTime();
     }

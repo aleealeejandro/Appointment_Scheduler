@@ -24,16 +24,14 @@ public class AppointmentsQuery {
                     query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' ORDER BY Start;", timeNowString);
                     break;
                 case "Month":
-                    query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' AND Start BETWEEN '%s' AND '%s' ORDER BY Start;", timeNowString, TimeController.getUtcDatetime(TimeController.getFirstOfMonthDateTime(dateTimeChosen)) + "%", TimeController.getUtcDatetime(TimeController.getLastOfMonthDateTime(dateTimeChosen)) + "%");
+                    query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' AND Start BETWEEN '%s' AND '%s' ORDER BY Start;", timeNowString, TimeController.getUtcDatetime(TimeController.getFirstOfMonthDateTime(dateTimeChosen)) + "%", TimeController.getUtcDatetime(TimeController.getLastOfMonthDateTime(dateTimeChosen).minusMinutes(1)) + "%");
                     break;
                 case "Week":
-                    query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' AND Start BETWEEN '%s' AND '%s' ORDER BY Start;", timeNowString, TimeController.getUtcDatetime(TimeController.getStartOfWeekDateTime(dateTimeChosen)) + "%", TimeController.getUtcDatetime(TimeController.getEndOfWeekDateTime(dateTimeChosen)) + "%");
+                    query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' AND Start BETWEEN '%s' AND '%s' ORDER BY Start;", timeNowString, TimeController.getUtcDatetime(TimeController.getStartOfWeekDateTime(dateTimeChosen)) + "%", TimeController.getUtcDatetime(TimeController.getEndOfWeekDateTime(dateTimeChosen).minusMinutes(1)) + "%");
                     break;
                 case "Today":
-                    query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' AND Start BETWEEN '%s' AND '%s' ORDER BY Start;", timeNowString, TimeController.getUtcDatetime(TimeController.openTime), TimeController.getUtcDatetime(TimeController.closeTime));
-                    break;
                 case "Day":
-                    query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' AND Start BETWEEN '%s' AND '%s' ORDER BY Start;", timeNowString, TimeController.getUtcDatetime(TimeController.getStartOfDayDateTime(dateTimeChosen)), TimeController.getUtcDatetime(TimeController.getStartOfDayDateTime(dateTimeChosen).plusHours(TimeController.amountOfHoursOfficeIsOpen)));
+                    query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' AND Start BETWEEN '%s' AND '%s' ORDER BY Start;", timeNowString, TimeController.getUtcDatetime(TimeController.getOpenOrCloseTime(dateTimeChosen, true)), TimeController.getUtcDatetime(TimeController.getOpenOrCloseTime(dateTimeChosen, false).minusMinutes(1)));
                     break;
                 case "My Appointments":
                     query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' AND User_ID='%s' ORDER BY Start;", timeNowString, MainUIController.loggedInUserID);
@@ -95,23 +93,27 @@ public class AppointmentsQuery {
     }
 
     public static boolean appointmentOverlapsOrExists(LocalDateTime startDatetime, LocalDateTime endDatetime) {
-//        change from SYSTEM to UTC LocalDateTime
-        System.out.println("\nstartDatetime before utc" + startDatetime);
-        System.out.println("endDatetime before utc" + endDatetime);
         startDatetime = TimeController.getUtcDatetime(startDatetime);
         endDatetime = TimeController.getUtcDatetime(endDatetime);
-        System.out.println("startDatetime after utc" + startDatetime);
-        System.out.println("endDatetime after utc" + endDatetime + "\n");
         String startDatetimeString = startDatetime.format(TimeController.timestampFormatter);
         String endDatetimeString = endDatetime.format(TimeController.timestampFormatter);
-        String query = "SELECT COUNT(Appointment_ID) FROM client_schedule.appointments WHERE (Start <= ? AND End >= ?) OR (Start <= ? AND End >= ?);";
+//        String query = "SELECT COUNT(Appointment_ID) FROM client_schedule.appointments WHERE (Start <= ? AND End >= ?) OR (Start <= ? AND End >= ?) OR (Start Between ? AND ?) OR (END Between ? AND ?);";
+        String query = "SELECT COUNT(Appointment_ID) FROM client_schedule.appointments WHERE (Start Between ? AND ?) OR (END Between ? AND ?);";
 
         try {
             PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(query);
             preparedStatement.setString(1, startDatetimeString);
-            preparedStatement.setString(2, startDatetimeString);
-            preparedStatement.setString(3, endDatetimeString);
+            preparedStatement.setString(2, endDatetimeString);
+            preparedStatement.setString(3, startDatetimeString);
             preparedStatement.setString(4, endDatetimeString);
+//            preparedStatement.setString(1, startDatetimeString);
+//            preparedStatement.setString(2, startDatetimeString);
+//            preparedStatement.setString(3, endDatetimeString);
+//            preparedStatement.setString(4, endDatetimeString);
+//            preparedStatement.setString(5, startDatetimeString);
+//            preparedStatement.setString(6, endDatetimeString);
+//            preparedStatement.setString(7, startDatetimeString);
+//            preparedStatement.setString(8, endDatetimeString);
             ResultSet resultSet = preparedStatement.executeQuery();
             int count = 0;
 

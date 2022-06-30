@@ -15,8 +15,8 @@ public class UserQuery {
         ObservableList<User> users = FXCollections.observableArrayList();
 
         try {
-//            String allUsersQuery = "SELECT User_ID, User_Name FROM client_schedule.users ORDER BY User_ID;";
-            String allUsersQuery = "SELECT User_ID, User_Name FROM client_schedule.users ORDER BY User_Name;";
+            String allUsersQuery = "SELECT User_ID, User_Name FROM client_schedule.users ORDER BY User_ID;";
+//            String allUsersQuery = "SELECT User_ID, User_Name FROM client_schedule.users ORDER BY User_Name;";
             PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(allUsersQuery);
             ResultSet userSet = preparedStatement.executeQuery();
 

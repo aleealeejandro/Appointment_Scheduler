@@ -389,7 +389,8 @@ public class MainUIController implements Initializable {
                 tableFilterLabel.setText(String.format("Appointments between %s - %s", TimeController.getStartOfWeekDateTime(selectedDate).toLocalDate().format(TimeController.dateFormatter), TimeController.getEndOfWeekDateTime(selectedDate).toLocalDate().format(TimeController.dateFormatter)));
                 break;
             case "Day":
-                tableFilterLabel.setText(String.format("Appointments on %s", TimeController.getStartOfDayDateTime(selectedDate).toLocalDate().format(TimeController.dateFormatter)));
+//                tableFilterLabel.setText(String.format("Appointments on %s", TimeController.getStartOfDayDateTime(selectedDate).toLocalDate().format(TimeController.dateFormatter)));
+                tableFilterLabel.setText(String.format("Appointments on %s", TimeController.getOpenOrCloseTime(selectedDate, true).format(TimeController.dateFormatter)));
                 break;
             case "Today":
                 tableFilterLabel.setText("Appointments Today");
@@ -442,7 +443,7 @@ public class MainUIController implements Initializable {
         LocalDateTime dateTimeChosen;
 
         if(dateChosen != null) {
-            dateTimeChosen = LocalDateTime.of(dateChosen, TimeController.timeNow);
+            dateTimeChosen = LocalDateTime.of(dateChosen, LocalTime.now());
         } else {
             dateTimeChosen = LocalDateTime.now();
         }
@@ -596,9 +597,26 @@ public class MainUIController implements Initializable {
                         LocalDate tomorrow = LocalDate.now().plusDays(1);
                         LocalDate oneYearFromToday = LocalDate.now().plusYears(1);
 
-                        if(empty || date.isBefore(tomorrow) || date.isAfter(oneYearFromToday) || date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY)  {
-                            setDisable(true);
+                        int offsetHours = TimeController.offsetSecondsTotal/3600;
+
+                        if(offsetHours >= 16) {
+                            if(empty || date.isBefore(tomorrow) || date.isAfter(oneYearFromToday) || date.getDayOfWeek() == DayOfWeek.SUNDAY || date.getDayOfWeek() == DayOfWeek.MONDAY)  {
+                                setDisable(true);
+                            }
+                        } else if(offsetHours >= 3) {
+                            if(empty || date.isBefore(tomorrow) || date.isAfter(oneYearFromToday) || date.getDayOfWeek() == DayOfWeek.SUNDAY)  {
+                                setDisable(true);
+                            }
+                        } else {
+                            if(empty || date.isBefore(tomorrow) || date.isAfter(oneYearFromToday) || date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY)  {
+                                setDisable(true);
+                            }
                         }
+
+
+//                        if(empty || date.isBefore(tomorrow) || date.isAfter(oneYearFromToday) || date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY)  {
+//                            setDisable(true);
+//                        }
 
                     }
                 };
@@ -629,7 +647,8 @@ public class MainUIController implements Initializable {
                     tableFilterLabel.setText(String.format("Appointments between %s - %s", TimeController.getStartOfWeekDateTime(selectedDate).toLocalDate().format(TimeController.dateFormatter), TimeController.getEndOfWeekDateTime(selectedDate).toLocalDate().format(TimeController.dateFormatter)));
                     break;
                 case "Day":
-                    tableFilterLabel.setText(String.format("Appointments on %s", TimeController.getStartOfDayDateTime(selectedDate).toLocalDate().format(TimeController.dateFormatter)));
+//                    tableFilterLabel.setText(String.format("Appointments on %s", TimeController.getStartOfDayDateTime(selectedDate).toLocalDate().format(TimeController.dateFormatter)));
+                    tableFilterLabel.setText(String.format("Appointments on %s", selectedDate.toLocalDate().format(TimeController.dateFormatter)));
                     break;
             }
 
