@@ -291,7 +291,7 @@ public class MainUIController implements Initializable {
     }
 
     @FXML
-    void handleCustomerButtonClicked(ActionEvent event) throws SQLException {
+    void handleCustomerButtonClicked(ActionEvent event) {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.initOwner(mainPanel.getScene().getWindow());
         FXMLLoader fxmlLoader = new FXMLLoader();
@@ -389,7 +389,6 @@ public class MainUIController implements Initializable {
                 tableFilterLabel.setText(String.format("Appointments between %s - %s", TimeController.getStartOfWeekDateTime(selectedDate).toLocalDate().format(TimeController.dateFormatter), TimeController.getEndOfWeekDateTime(selectedDate).toLocalDate().format(TimeController.dateFormatter)));
                 break;
             case "Day":
-//                tableFilterLabel.setText(String.format("Appointments on %s", TimeController.getStartOfDayDateTime(selectedDate).toLocalDate().format(TimeController.dateFormatter)));
                 tableFilterLabel.setText(String.format("Appointments on %s", TimeController.getOpenOrCloseTime(selectedDate, true).format(TimeController.dateFormatter)));
                 break;
             case "Today":
@@ -425,7 +424,6 @@ public class MainUIController implements Initializable {
     }
 
     public void loadFilteredAppointmentsTable() {
-//        NEW ---------------------------------------------------------------------------------------------------------------------------------------------------
         ObservableList<Appointment> appointmentsList = getAppointmentList();
         assert appointmentsList != null;
         FilteredList<Appointment> filteredAppointments = new FilteredList<>(appointmentsList);
@@ -435,7 +433,6 @@ public class MainUIController implements Initializable {
         );
 
         appointmentsTable.setItems(filteredAppointments);
-//        NEW ---------------------------------------------------------------------------------------------------------------------------------------------------
         disableEnableUpdateAndDeleteAppointmentButtons();
     }
 
@@ -449,7 +446,6 @@ public class MainUIController implements Initializable {
         }
 
         try {
-//            return AppointmentsQuery.getAllAppointments(appointmentFilterChoiceBoxChoice, LocalDateTime.now());
             return AppointmentsQuery.getAllAppointments(filterAppointmentsByChoiceBox.getValue(), LocalDateTime.now(), dateTimeChosen);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -485,7 +481,6 @@ public class MainUIController implements Initializable {
     }
 
     public void loadFilteredCustomersTable() {
-//        NEW ---------------------------------------------------------------------------------------------------------------------------------------------------
         ObservableList<Customer> customersList = getCustomersList();
         assert customersList != null;
         FilteredList<Customer> filteredCustomers = new FilteredList<>(customersList);
@@ -496,7 +491,6 @@ public class MainUIController implements Initializable {
 
         customersTable.setItems(filteredCustomers);
         loadFilteredAppointmentsTable();
-//        NEW ---------------------------------------------------------------------------------------------------------------------------------------------------
         disableEnableUpdateAndDeleteCustomerButtons();
     }
 
@@ -564,7 +558,7 @@ public class MainUIController implements Initializable {
         }
 
         filterCustomersByDivisionChoiceBox.getSelectionModel().selectFirst();
-        countryFilterChoice = filterCustomersByCountryChoiceBox.getSelectionModel().getSelectedItem();//-------------------------------------------------------=====================
+        countryFilterChoice = filterCustomersByCountryChoiceBox.getSelectionModel().getSelectedItem();
         divisionFilterChoice = filterCustomersByDivisionChoiceBox.getSelectionModel().getSelectedItem();
         loadFilteredCustomersTable();
 
@@ -613,11 +607,6 @@ public class MainUIController implements Initializable {
                             }
                         }
 
-
-//                        if(empty || date.isBefore(tomorrow) || date.isAfter(oneYearFromToday) || date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY)  {
-//                            setDisable(true);
-//                        }
-
                     }
                 };
             }
@@ -630,8 +619,6 @@ public class MainUIController implements Initializable {
         appointmentDatePickerField.valueProperty().addListener((ov, oldValue, newValue) -> {
             appointmentDatePickerField.setValue(newValue);
             dateChosen = appointmentDatePickerField.getValue();
-//            appointmentDatePickerField.
-            System.out.println(dateChosen);
             loadFilteredAppointmentsTable();
             LocalDateTime selectedDate = LocalDateTime.now().minusDays(3);
 
