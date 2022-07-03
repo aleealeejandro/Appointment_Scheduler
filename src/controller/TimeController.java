@@ -11,7 +11,7 @@ public class TimeController {
     public static DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm a");
     public static DateTimeFormatter timestampFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     public static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-//    public static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm a MM/dd/yy");
+    public static DateTimeFormatter monthYearFormatter = DateTimeFormatter.ofPattern("MMMM yyyy");
     private static final ZoneId estZoneID = ZoneId.of("America/New_York");
 
     public static ZoneId systemZoneID = ZoneId.systemDefault();
@@ -133,10 +133,11 @@ public class TimeController {
     }
 
     public static LocalDate nextDateAvailable() {
-        LocalDateTime startDatetime = TimeController.openTime;
-        LocalDate startDate = startDatetime.toLocalDate();
+//        LocalDateTime startDatetime = TimeController.openTime;
         LocalDateTime timeNow = LocalDateTime.now();
-        LocalDateTime lastAppointmentSlotTimeToday = getOpenOrCloseTime(timeNow, false);
+        LocalDateTime startDatetime = getOpenOrCloseTime(timeNow, true);
+        LocalDate startDate = startDatetime.toLocalDate();
+        LocalDateTime lastAppointmentSlotTimeToday = getOpenOrCloseTime(timeNow, false).minusMinutes(minimumTimeDurationMinutes);
         LocalDate tomorrow = LocalDate.now().plusDays(1);
         LocalDate oneYearFromNow = timeNow.plusYears(1).toLocalDate();
 

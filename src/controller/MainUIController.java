@@ -1,17 +1,25 @@
 package controller;
 
+import com.sun.javafx.fxml.builder.JavaFXSceneBuilder;
 import databaseQueries.AppointmentsQuery;
 import databaseQueries.CountriesQuery;
 import databaseQueries.CustomersQuery;
 import databaseQueries.DivisionsQuery;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import model.Appointment;
@@ -22,10 +30,9 @@ import model.Division;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
@@ -44,6 +51,9 @@ public class MainUIController implements Initializable {
     @FXML public Label divisionLabel;
     @FXML public DatePicker appointmentDatePickerField;
     @FXML public Label tableFilterLabel;
+    @FXML public PieChart appointmentTypesPieChart;
+    @FXML public ListView<LocalDate> fullyBookedDatesListView;
+    @FXML public ComboBox<String> reportsByMonthComboBox;
     @FXML private AnchorPane mainPanel;
     @FXML private Button addAppointmentButton;
     @FXML private Button updateAppointmentButton;
@@ -76,14 +86,12 @@ public class MainUIController implements Initializable {
         datePicked();
         disableDatesOnDatePicker();
 
-//        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-//        executorService.scheduleAtFixedRate(MainUIController::runTask, 0, 10, TimeUnit.SECONDS);
+        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService.scheduleAtFixedRate(MainUIController::runTask, 0, 10, TimeUnit.SECONDS);
 
         loadAppointmentFilterChoices();
         loadAppointmentSearchFilterChoiceBoxChoices();
 
-//        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-//        executorService.scheduleAtFixedRate(runTask(), 0, 10, TimeUnit.SECONDS);
         try {
             loadCountryChoicesInChoiceBox();
         } catch (SQLException e) {
@@ -96,17 +104,8 @@ public class MainUIController implements Initializable {
         disableEnableUpdateAndDeleteCustomerButtons();
         disableUpdateAndDeleteCustomerButtons();
         appointmentWithinFifteenMinutes(AppointmentsQuery.checkIfAppointmentWithinFifteenMinutes(LocalDateTime.now(), LocalDateTime.now().plusMinutes(15)));
+        loadMonthsInComboBox();
 
-//        final int tenHourBreak = 10;
-//        final int maxHours = 24;
-//        final int hoursOpen = 14;
-//
-//        for(int i=0; i<=14; i++) {
-//            int hoursLeft = i;
-//            int hoursRight =
-//
-//            System.out.println(String.format(""));
-//        }
     }
 
     public static void getUserData(int id, String username) {
@@ -114,10 +113,10 @@ public class MainUIController implements Initializable {
         loggedInUsername = username;
     }
 
-    public static void runTask() {
+    private static void runTask() {
 //        loadFilteredAppointmentsTable();
         timeRightNow = LocalDateTime.now();
-        System.out.println(timeRightNow.format(TimeController.timestampFormatter) + "   Running the task every 10 seconds.");
+//        System.out.println(timeRightNow.format(TimeController.timestampFormatter) + "   Running the task every 10 seconds.");
 
     }
     public static void appointmentWithinFifteenMinutes(int appointmentInFifteen) {
@@ -180,15 +179,19 @@ public class MainUIController implements Initializable {
         else {
             enableUpdateAndDeleteAppointmentButtons();
 
-//            LocalDateTime appointmentStartDateTime = LocalDateTime.of(appointment.getStartDate(), LocalTime.parse(appointment.getStartTime(), TimeController.timeFormatter));
-//            LocalDateTime appointmentEndDateTime = LocalDateTime.of(appointment.getEndDate(), LocalTime.parse(appointment.getEndTime(), TimeController.timeFormatter));
-//            if(appointmentStartDateTime.isBefore(timeRightNow) || appointmentEndDateTime.isAfter(timeRightNow)) {
-//                System.out.println(appointmentStartDateTime + " is before " + timeRightNow);
-//                disableUpdateAndDeleteAppointmentButtons();
-//            }
-//            else {
-//                enableUpdateAndDeleteAppointmentButtons();
-//            }
+            LocalDateTime appointmentStartDateTime = LocalDateTime.of(appointment.getStartDate(), LocalTime.parse(appointment.getStartTime(), TimeController.timeFormatter));
+            LocalDateTime appointmentEndDateTime = LocalDateTime.of(appointment.getEndDate(), LocalTime.parse(appointment.getEndTime(), TimeController.timeFormatter));
+            if(appointmentStartDateTime.isBefore(timeRightNow) && appointmentEndDateTime.isAfter(timeRightNow)) {
+                System.out.println("Appointment in progress");
+                disableUpdateAndDeleteAppointmentButtons();
+            } else if(appointmentEndDateTime.isBefore(timeRightNow)) {
+                System.out.println("Appointment already passed");
+                updateAppointmentButton.setDisable(true);
+                deleteAppointmentButton.setDisable(false);
+            }
+            else {
+                enableUpdateAndDeleteAppointmentButtons();
+            }
         }
 //        assert appointment != null;
 
@@ -261,6 +264,7 @@ public class MainUIController implements Initializable {
             if(!dialog.isShowing()) {
                 loadFilteredAppointmentsTable();
                 searchAppointmentsTextField.clear();
+                numberOfAppointmentsReport();
             }
 
         } else {
@@ -277,13 +281,13 @@ public class MainUIController implements Initializable {
             Optional<ButtonType> result = deletionAlert.showAndWait();
 
             if(result.isPresent() && result.get() == ButtonType.OK){
-//                if(result.get() == ButtonType.OK){
                 boolean deletionConfirmation = AppointmentsQuery.deleteAppointment(id);
 
                 if(deletionConfirmation) {
                     loadFilteredAppointmentsTable();
                     searchAppointmentsTextField.clear();
                     disableUpdateAndDeleteAppointmentButtons();
+                    numberOfAppointmentsReport();
                 }
             }
 
@@ -423,7 +427,8 @@ public class MainUIController implements Initializable {
         return isInList;
     }
 
-    public void loadFilteredAppointmentsTable() {
+    private void loadFilteredAppointmentsTable() {
+
         ObservableList<Appointment> appointmentsList = getAppointmentList();
         assert appointmentsList != null;
         FilteredList<Appointment> filteredAppointments = new FilteredList<>(appointmentsList);
@@ -634,7 +639,6 @@ public class MainUIController implements Initializable {
                     tableFilterLabel.setText(String.format("Appointments between %s - %s", TimeController.getStartOfWeekDateTime(selectedDate).toLocalDate().format(TimeController.dateFormatter), TimeController.getEndOfWeekDateTime(selectedDate).toLocalDate().format(TimeController.dateFormatter)));
                     break;
                 case "Day":
-//                    tableFilterLabel.setText(String.format("Appointments on %s", TimeController.getStartOfDayDateTime(selectedDate).toLocalDate().format(TimeController.dateFormatter)));
                     tableFilterLabel.setText(String.format("Appointments on %s", selectedDate.toLocalDate().format(TimeController.dateFormatter)));
                     break;
             }
@@ -642,4 +646,70 @@ public class MainUIController implements Initializable {
         });
     }
 
+    private void loadMonthsInComboBox() {
+        LocalDate thisMonth = LocalDate.now();
+
+        for(int i = 0; i <= 11; i++) {
+            reportsByMonthComboBox.getItems().add(thisMonth.format(TimeController.monthYearFormatter));
+            thisMonth = thisMonth.plusMonths(1);
+        }
+
+        reportsByMonthComboBox.getSelectionModel().selectFirst();
+
+        numberOfAppointmentsReport();
+    }
+
+    public void numberOfAppointmentsReport() {
+        YearMonth monthYear = java.time.YearMonth.parse(reportsByMonthComboBox.getSelectionModel().getSelectedItem(), TimeController.monthYearFormatter);
+        LocalDateTime dateTime = LocalDateTime.of(monthYear.getYear(), monthYear.getMonth(), 1,0,0);
+        LocalDateTime monthStart = TimeController.getFirstOfMonthDateTime(dateTime);
+        LocalDateTime monthEnd = TimeController.getLastOfMonthDateTime(dateTime);
+        ObservableList<PieChart.Data> appointmentsByType = AppointmentsQuery.numberOfAppointmentsByMonth(monthStart, monthEnd);
+
+        assert appointmentsByType != null;
+        if(!appointmentsByType.isEmpty()) {
+            appointmentTypesPieChart.setTitle(String.format("Appointments By Type in %s", reportsByMonthComboBox.getSelectionModel().getSelectedItem()));
+            appointmentTypesPieChart.setData(appointmentsByType);
+            handlePieSliceClicked();
+        }
+
+
+//        handlePieSliceClicked();
+
+//        @FXML public PieChart appointmentTypesPieChart;
+//        @FXML public ListView<LocalDate> fullyBookedDatesListView;
+//        @FXML public ComboBox<Month> reportsByMonthComboBox;
+    }
+
+    public void handlePieSliceClicked() {
+        Label caption = new Label("work already");
+//        ((Group) mainPanel.getScene().getRoot()).getChildren().add(caption); // Add me
+        caption.setTextFill(Color.BLACK);
+        caption.setStyle("-fx-font: 24 arial;");
+
+
+        for(final PieChart.Data data : appointmentTypesPieChart.getData()) {
+//            Tooltip tooltip = new Tooltip(String.valueOf(data.getPieValue()));
+//            Tooltip.install(data.getNode(), tooltip);
+//            ((Group) mainPanel.getScene().getRoot()).getChildren().add(caption); // Add me
+
+            data.getNode().addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
+//                ((Group) appointmentTypesPieChart.getScene().getRoot()).getChildren().add(caption); // Add me
+//                System.out.println("you clicked me " + (int) data.getPieValue() + " " + data.getName());
+//                caption.setTranslateX(e.getSceneX());
+//                caption.setTranslateY(e.getSceneY());
+//                caption.setText(String.format("%s %s", (int) data.getPieValue(), data.getName()));
+//                caption.setVisible(true);
+                Tooltip tooltip = new Tooltip(data.getName() + " - " + (int) data.getPieValue());
+                Tooltip.install(data.getNode(), tooltip);
+            });
+//            data.getNode().addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
+//                System.out.println("you clicked me " + (int) data.getPieValue() + " " + data.getName());
+//                caption.setTranslateX(e.getSceneX());
+//                caption.setTranslateY(e.getSceneY());
+//                caption.setVisible(false);
+//            });
+        }
+
+    }
 }
