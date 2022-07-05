@@ -15,9 +15,12 @@ import java.sql.SQLException;
 import java.time.*;
 import java.util.HashSet;
 import java.util.ResourceBundle;
-
 import static java.time.temporal.ChronoUnit.MINUTES;
 
+/**
+ *
+ * @author Alexander Padilla
+ */
 public class AppointmentFormController implements Initializable {
     @FXML public AnchorPane mainPanel;
     @FXML public Button saveButton;
@@ -50,15 +53,19 @@ public class AppointmentFormController implements Initializable {
     private static boolean fieldsEmpty = true;
     private static final HashSet<LocalDate> fullyScheduledDates = new HashSet<>();
 
-
+    /**
+     * uses initialize to initialize this scene
+     * @param url the location used to resolve relative paths for the root object, or null if the location is not known
+     * @param rb the resources used to localize the root object, or null if the root object was not localized
+     */
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    public void initialize(URL url, ResourceBundle rb) {
         dateChosen = LocalDate.now().minusDays(1);
         timeDurationChoice = "15 minutes";
         duration = TimeController.minimumTimeDurationMinutes;
 
         disableDatesOnDatePicker();
-        datePicked();
+        datePickerListener();
         try {
 //            loadTimeDurationComboBox();
 //            loadStartTimesComboBox();
@@ -77,15 +84,27 @@ public class AppointmentFormController implements Initializable {
         }
     }
 
-    public static void getParentNodeData(String form, int userIDNum) {
+    /**
+     * gets parent node data
+     * @param form the type of form
+     * @param loggedInUserIDNum logged in user's username
+     */
+    public static void getParentNodeData(String form, int loggedInUserIDNum) {
         typeOfForm = form;
-        userID =  String.valueOf(userIDNum);
+        userID =  String.valueOf(loggedInUserIDNum);
     }
 
+    /**
+     * gets appointment selected data from parent stage table view
+     * @param a the appointment object
+     */
     public static void getAppointmentChosen(Appointment a) {
         appointment = a;
     }
 
+    /**
+     * loads add appointment form
+     */
     public void loadAddAppointmentForm() {
         appointmentIDTextField.setText(AppointmentsQuery.getNextAppointmentID());
         appointmentFormTitle.setText("Add Appointment");
@@ -110,6 +129,9 @@ public class AppointmentFormController implements Initializable {
 //        handleUserChoice();
     }
 
+    /**
+     * loads update appointment form
+     */
     public void loadUpdateAppointmentForm() {
         appointmentFormTitle.setText("Update Appointment");
         saveButton.setText("Update");
@@ -139,8 +161,11 @@ public class AppointmentFormController implements Initializable {
 
     }
 
+    /**
+     * disables dates on date-picker
+     */
     public void disableDatesOnDatePicker() {
-        getAllDatesThatAreFullyBookedForAYear();
+        findAllDatesThatAreFullyBookedForAYear();
         System.out.println("offset hours: " + (TimeController.offsetSecondsTotal/3600));
 
         final Callback<DatePicker, DateCell> dayCellFactory = new Callback<>() {
@@ -204,7 +229,10 @@ public class AppointmentFormController implements Initializable {
 //        });
 //    }
 
-    public void getAllDatesThatAreFullyBookedForAYear() {
+    /**
+     * finds all dates that are fully booked
+     */
+    public void findAllDatesThatAreFullyBookedForAYear() {
         LocalDate date = LocalDate.now();
         LocalDate oneYearFromNow = date.plusYears(1);
 
@@ -239,6 +267,11 @@ public class AppointmentFormController implements Initializable {
         }
     }
 
+    /**
+     * finds the next date available
+     *
+     * @return the next date available
+     */
     public LocalDate nextDateAvailable() {
         LocalDateTime startDatetime = TimeController.openTime;
         LocalDate startDate = startDatetime.toLocalDate();
@@ -294,7 +327,10 @@ public class AppointmentFormController implements Initializable {
         return startDate;
     }
 
-    public void datePicked() {
+    /**
+     * creates a listener for the date-picker
+     */
+    public void datePickerListener() {
         datePickerField.valueProperty().addListener((ov, oldValue, newValue) -> {
             datePickerField.setValue(newValue);
             dateChosen = datePickerField.getValue();
@@ -305,6 +341,9 @@ public class AppointmentFormController implements Initializable {
         });
     }
 
+    /**
+     * loads combo-box with time durations
+     */
     private void loadTimeDurationComboBox() {
         timeDurationComboBox.getItems().clear();
 
@@ -331,6 +370,9 @@ public class AppointmentFormController implements Initializable {
         timeDurationComboBox.getSelectionModel().selectFirst();
     }
 
+    /**
+     * handles combo-box selection
+     */
     @FXML
     public void handleTimeDurationChoice() {
         timeDurationChoice = timeDurationComboBox.getSelectionModel().getSelectedItem();
@@ -341,6 +383,12 @@ public class AppointmentFormController implements Initializable {
         }
     }
 
+    /**
+     * checks if time slots are available for the day
+     *
+     * @param appointmentDuration duration of the appointment
+     * @return boolean value regarding time slots availability
+     */
     public boolean timeSlotsAvailable(int appointmentDuration) {
 //        dateChosen = datePickerField.getValue();
         LocalDateTime oneHourFromNow = LocalDateTime.now().plusHours(1);
@@ -410,6 +458,9 @@ public class AppointmentFormController implements Initializable {
         return true;
     }
 
+    /**
+     * loads combo-box with start times based on time duration
+     */
     public void loadStartTimesComboBox() {
         LocalDateTime oneHourFromNow = LocalDateTime.now().plusHours(1);
 
@@ -489,6 +540,9 @@ public class AppointmentFormController implements Initializable {
     }
 
 
+    /**
+     * handles combo-box selection
+     */
     @FXML
     public void handleStartTimeChoice() {
 //        String appointmentStart = startTimesComboBox.getSelectionModel().getSelectedItem();
@@ -510,6 +564,11 @@ public class AppointmentFormController implements Initializable {
 //        System.out.println("\nstartDateTimeChosen in utc: " + TimeController.getUtcDatetime(startDateTimeChosen) + "\n");
     }
 
+    /**
+     * loads combo-box with contacts
+     *
+     * @throws SQLException if an SQL exception occurs
+     */
     public void loadContactChoiceBox() throws SQLException {
         ObservableList<Contact> contacts = ContactsQuery.getAllContacts();
         assert contacts != null;
@@ -524,6 +583,11 @@ public class AppointmentFormController implements Initializable {
 //        contactChosen = contactsComboBox.getSelectionModel().getSelectedItem();
 //    }
 
+    /**
+     * loads combo-box with customers
+     *
+     * @throws SQLException if an SQL exception occurs
+     */
     public void loadCustomerChoiceBox() throws SQLException {
         ObservableList<Customer> customers = CustomersQuery.getAllCustomers();
         assert customers != null;
@@ -539,6 +603,11 @@ public class AppointmentFormController implements Initializable {
 //        customerChosen = customersComboBox.getSelectionModel().getSelectedItem();
 //    }
 
+    /**
+     * loads combo-box with users
+     *
+     * @throws SQLException if an SQL exception occurs
+     */
     public void loadUserChoiceBox() throws SQLException {
         ObservableList<User> userIDs = UserQuery.getAllUsers();
         assert userIDs != null;
@@ -553,6 +622,9 @@ public class AppointmentFormController implements Initializable {
 //        userChosen = userIDComboBox.getSelectionModel().getSelectedItem();
 //    }
 
+    /**
+     * checks if text-fields are empty
+     */
     private void checkIfFieldsAreEmpty() {
         if(titleTextField.getText().isEmpty() ||
                 descriptionTextField.getText().isEmpty() ||
@@ -571,6 +643,9 @@ public class AppointmentFormController implements Initializable {
         }
     }
 
+    /**
+     * save button handler
+     */
     @FXML
     void saveAppointment() {
         checkIfFieldsAreEmpty();
@@ -612,6 +687,9 @@ public class AppointmentFormController implements Initializable {
         }
     }
 
+    /**
+     * button clicked handler
+     */
     @FXML
     void closeWindow() {
         Stage stage = (Stage) cancelButton.getScene().getWindow();

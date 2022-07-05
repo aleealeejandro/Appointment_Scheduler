@@ -31,8 +31,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.*;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
@@ -40,6 +38,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
+/**
+ *
+ * @author Alexander Padilla
+ */
 public class MainUIController implements Initializable {
     @FXML public TextField searchCustomersTextField;
     @FXML public TabPane tabPane;
@@ -75,15 +77,19 @@ public class MainUIController implements Initializable {
     private String countryFilterChoice;
     private String divisionFilterChoice;
     private LocalDate dateChosen;
-
     @FXML public TextField searchAppointmentsTextField;
     public static LocalDateTime timeRightNow;
 
+    /**
+     * uses initialize to initialize this scene
+     * @param url the location used to resolve relative paths for the root object, or null if the location is not known
+     * @param rb the resources used to localize the root object, or null if the root object was not localized
+     */
     public void initialize(URL url, ResourceBundle rb) {
         tabPane.setTabMinWidth(75);
         tabPane.setTabMinHeight(25);
         dateChosen = LocalDate.now().plusDays(1);
-        datePicked();
+        datePickerListener();
         disableDatesOnDatePicker();
 
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
@@ -108,19 +114,34 @@ public class MainUIController implements Initializable {
 
     }
 
+    /**
+     * gets user data from the parent stage
+     *
+     * @param id the logged-in user's ID
+     * @param username the logged-in user's username
+     */
     public static void getUserData(int id, String username) {
         loggedInUserID = id;
         loggedInUsername = username;
     }
 
+    /**
+     * runs task on every 10 seconds
+     */
     private static void runTask() {
 //        loadFilteredAppointmentsTable();
         timeRightNow = LocalDateTime.now();
 //        System.out.println(timeRightNow.format(TimeController.timestampFormatter) + "   Running the task every 10 seconds.");
 
     }
-    public static void appointmentWithinFifteenMinutes(int appointmentInFifteen) {
-        if(appointmentInFifteen > 0) {
+
+    /**
+     * shows alert box if number of appointments within fifteen minutes is more than 0
+     *
+     * @param numberOfAppointmentsInFifteenMinutes number of appointments within fifteen minutes
+     */
+    public static void appointmentWithinFifteenMinutes(int numberOfAppointmentsInFifteenMinutes) {
+        if(numberOfAppointmentsInFifteenMinutes > 0) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Notice");
             alert.setHeaderText("Upcoming Appointment");
@@ -129,6 +150,9 @@ public class MainUIController implements Initializable {
         }
     }
 
+    /**
+     * loads combo-box choices
+     */
     private void loadAppointmentFilterChoices() {
         filterAppointmentsByChoiceBox.getItems().addAll("All", "Month", "Week", "Day", "Today", "My Appointments");
         filterAppointmentsByChoiceBox.getSelectionModel().selectFirst();
@@ -137,6 +161,9 @@ public class MainUIController implements Initializable {
 //        loadFilteredAppointmentsTable();
     }
 
+    /**
+     * loads combo-box choices
+     */
     private void loadAppointmentSearchFilterChoiceBoxChoices() {
         searchAppointmentsByChoiceBox.getItems().addAll("Contact", "Type");
         searchAppointmentsByChoiceBox.getSelectionModel().selectFirst();
@@ -145,6 +172,9 @@ public class MainUIController implements Initializable {
 //        loadFilteredAppointmentsTable();
     }
 
+    /**
+     * loads combo-box choices
+     */
     private void loadCustomerChoiceBoxChoices() {
         searchCustomersByChoiceBox.getItems().addAll("Customer ID", "Name", "Division ID");
         searchCustomersByChoiceBox.getSelectionModel().selectFirst();
@@ -153,16 +183,25 @@ public class MainUIController implements Initializable {
         loadFilteredCustomersTable();
     }
 
+    /**
+     * handles table view row selection
+     */
     @FXML
     void appointmentTableViewRowChosen() {
         disableEnableUpdateAndDeleteAppointmentButtons();
     }
 
+    /**
+     * handles table view row selection
+     */
     @FXML
     void customerTableViewRowChosen() {
         disableEnableUpdateAndDeleteCustomerButtons();
     }
 
+    /**
+     * disables or enables update and delete buttons
+     */
     private void disableEnableUpdateAndDeleteAppointmentButtons() {
         Appointment appointment = appointmentsTable.getSelectionModel().getSelectedItem();
 
@@ -190,16 +229,25 @@ public class MainUIController implements Initializable {
 
     }
 
+    /**
+     * disables update and delete buttons
+     */
     private void disableUpdateAndDeleteAppointmentButtons() {
         updateAppointmentButton.setDisable(true);
         deleteAppointmentButton.setDisable(true);
     }
 
+    /**
+     * enables update and delete buttons
+     */
     private void enableUpdateAndDeleteAppointmentButtons() {
         updateAppointmentButton.setDisable(false);
         deleteAppointmentButton.setDisable(false);
     }
 
+    /**
+     * disables or enables update and delete buttons
+     */
     private void disableEnableUpdateAndDeleteCustomerButtons() {
         Customer customer = customersTable.getSelectionModel().getSelectedItem();
 
@@ -210,16 +258,27 @@ public class MainUIController implements Initializable {
         }
     }
 
+    /**
+     * disables update and delete buttons
+     */
     private void disableUpdateAndDeleteCustomerButtons() {
         updateCustomerButton.setDisable(true);
         deleteCustomerButton.setDisable(true);
     }
 
+    /**
+     * enables update and delete buttons
+     */
     private void enableUpdateAndDeleteCustomerButtons() {
         updateCustomerButton.setDisable(false);
         deleteCustomerButton.setDisable(false);
     }
 
+    /**
+     * handles appointment button click
+     *
+     * @param event button clicked action event
+     */
     @FXML
     void handleAppointmentButtonClicked(ActionEvent event) {
         Dialog<ButtonType> dialog = new Dialog<>();
@@ -287,6 +346,11 @@ public class MainUIController implements Initializable {
         }
     }
 
+    /**
+     * handles customer button click
+     *
+     * @param event button clicked action event
+     */
     @FXML
     void handleCustomerButtonClicked(ActionEvent event) {
         Dialog<ButtonType> dialog = new Dialog<>();
@@ -352,6 +416,9 @@ public class MainUIController implements Initializable {
         }
     }
 
+    /**
+     * handles combo-box selection
+     */
     @FXML
     public void handleAppointmentFilterChoice() {
         appointmentFilterChoiceBoxChoice = filterAppointmentsByChoiceBox.getSelectionModel().getSelectedItem();
@@ -408,7 +475,13 @@ public class MainUIController implements Initializable {
         };
     }
 
-    private boolean searchFindAppointments(Appointment appointment, String searchText){
+    /**
+     * filters search with provided text
+     *
+     * @param appointment appointment object
+     * @param searchText text to search for
+     */
+    private boolean searchFindAppointments(Appointment appointment, String searchText) {
         boolean isInList = false;
 
         if(searchAppointmentsByChoiceBoxChoice.equals("Contact")) {
@@ -420,6 +493,9 @@ public class MainUIController implements Initializable {
         return isInList;
     }
 
+    /**
+     * loads table view with filtered results
+     */
     private void loadFilteredAppointmentsTable() {
 
         ObservableList<Appointment> appointmentsList = getAppointmentList();
@@ -434,6 +510,11 @@ public class MainUIController implements Initializable {
         disableEnableUpdateAndDeleteAppointmentButtons();
     }
 
+    /**
+     * gets all the appointments from the database
+     *
+     * @return list of appointments
+     */
     private ObservableList<Appointment> getAppointmentList() {
         LocalDateTime dateTimeChosen;
 
@@ -460,7 +541,13 @@ public class MainUIController implements Initializable {
         };
     }
 
-    private boolean searchFindCustomers(Customer customer, String searchText){
+    /**
+     * filters search with provided text
+     *
+     * @param customer customer object
+     * @param searchText text to search for
+     */
+    private boolean searchFindCustomers(Customer customer, String searchText) {
         boolean isInList = false;
 
         if(searchCustomersByChoiceBox.getSelectionModel().getSelectedItem().equals("Customer ID")) {
@@ -478,6 +565,9 @@ public class MainUIController implements Initializable {
         return isInList;
     }
 
+    /**
+     * loads table view with filtered results
+     */
     public void loadFilteredCustomersTable() {
         ObservableList<Customer> customersList = getCustomersList();
         assert customersList != null;
@@ -492,6 +582,11 @@ public class MainUIController implements Initializable {
         disableEnableUpdateAndDeleteCustomerButtons();
     }
 
+    /**
+     * gets all the customers from the database
+     *
+     * @return list of customers
+     */
     private ObservableList<Customer> getCustomersList() {
         try {
             return CustomersQuery.getAllCustomersByDivision(countryFilterChoice, divisionFilterChoice);
@@ -501,6 +596,9 @@ public class MainUIController implements Initializable {
         }
     }
 
+    /**
+     * handles logout button click
+     */
     @FXML
     public void logoutButtonClicked() {
         Stage stage = (Stage) logoutButton.getScene().getWindow();
@@ -510,12 +608,18 @@ public class MainUIController implements Initializable {
         stage.close();
     }
 
+    /**
+     * handles combo-box selection
+     */
     @FXML
     public void handleCustomerSearchFilterChoice() {
         searchCustomersTextField.clear();
         loadFilteredCustomersTable();
     }
 
+    /**
+     * handles combo-box selection
+     */
     @FXML
     public void handleAppointmentSearchFilterChoice() {
         searchAppointmentsByChoiceBoxChoice = searchAppointmentsByChoiceBox.getSelectionModel().getSelectedItem();
@@ -523,12 +627,20 @@ public class MainUIController implements Initializable {
         loadFilteredAppointmentsTable();
     }
 
+    /**
+     * handles combo-box selection
+     */
     @FXML
     public void handleCustomerDivisionChoiceBoxChoice() {
         divisionFilterChoice = filterCustomersByDivisionChoiceBox.getSelectionModel().getSelectedItem();
         loadFilteredCustomersTable();
     }
 
+    /**
+     * loads combo-box with choices
+     *
+     * @throws SQLException if an SQL exception occurs
+     */
     private void loadCountryChoicesInChoiceBox() throws SQLException {
         ObservableList<Country> countries = CountriesQuery.getAllCountries();
         assert countries != null;
@@ -544,6 +656,9 @@ public class MainUIController implements Initializable {
         loadDivisionChoicesInChoiceBox();
     }
 
+    /**
+     * loads combo-box with choices
+     */
     private void loadDivisionChoicesInChoiceBox() {
         filterCustomersByDivisionChoiceBox.getItems().clear();
         ObservableList<Division> divisions = DivisionsQuery.getAllDivisions(countryFilterChoice);
@@ -562,6 +677,9 @@ public class MainUIController implements Initializable {
 
     }
 
+    /**
+     * handles combo-box selection
+     */
     @FXML
     public void handleCustomerCountryChoiceBoxChoice() {
         countryFilterChoice = filterCustomersByCountryChoiceBox.getSelectionModel().getSelectedItem();
@@ -579,6 +697,9 @@ public class MainUIController implements Initializable {
         loadDivisionChoicesInChoiceBox();
     }
 
+    /**
+     * disables specific dates on this date-picker
+     */
     public void disableDatesOnDatePicker() {
         final Callback<DatePicker, DateCell> dayCellFactory = new Callback<>() {
             public DateCell call(final DatePicker datePicker) {
@@ -613,7 +734,10 @@ public class MainUIController implements Initializable {
         appointmentDatePickerField.setDayCellFactory(dayCellFactory);
     }
 
-    public void datePicked() {
+    /**
+     * creates a listener for the date-picker
+     */
+    public void datePickerListener() {
         appointmentDatePickerField.valueProperty().addListener((ov, oldValue, newValue) -> {
             appointmentDatePickerField.setValue(newValue);
             dateChosen = appointmentDatePickerField.getValue();
@@ -639,6 +763,9 @@ public class MainUIController implements Initializable {
         });
     }
 
+    /**
+     * loads combo-box with choices
+     */
     private void loadMonthsInComboBox() {
         LocalDate thisMonth = LocalDate.now();
 
@@ -652,6 +779,9 @@ public class MainUIController implements Initializable {
         numberOfAppointmentsReport();
     }
 
+    /**
+     * loads pie graph
+     */
     public void numberOfAppointmentsReport() {
         YearMonth monthYear = java.time.YearMonth.parse(reportsByMonthComboBox.getSelectionModel().getSelectedItem(), TimeController.monthYearFormatter);
         LocalDateTime dateTime = LocalDateTime.of(monthYear.getYear(), monthYear.getMonth(), 1,0,0);
@@ -663,18 +793,15 @@ public class MainUIController implements Initializable {
         if(!appointmentsByType.isEmpty()) {
             appointmentTypesPieChart.setTitle(String.format("Appointments By Type in %s", reportsByMonthComboBox.getSelectionModel().getSelectedItem()));
             appointmentTypesPieChart.setData(appointmentsByType);
-            handlePieSliceClicked();
+            handlePieSliceHovered();
         }
 
-
-//        handlePieSliceClicked();
-
-//        @FXML public PieChart appointmentTypesPieChart;
-//        @FXML public ListView<LocalDate> fullyBookedDatesListView;
-//        @FXML public ComboBox<Month> reportsByMonthComboBox;
     }
 
-    public void handlePieSliceClicked() {
+    /**
+     * loads tooltip to pie graph slices when hovering over a pie slice
+     */
+    public void handlePieSliceHovered() {
         Label caption = new Label("work already");
 //        ((Group) mainPanel.getScene().getRoot()).getChildren().add(caption); // Add me
 //        appointmentTypesPieChart.ge;

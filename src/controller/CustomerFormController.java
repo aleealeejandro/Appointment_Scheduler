@@ -17,6 +17,10 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
+/**
+ *
+ * @author Alexander Padilla
+ */
 public class CustomerFormController implements Initializable {
     @FXML public AnchorPane mainPanel;
     @FXML public Button saveButton;
@@ -36,8 +40,13 @@ public class CustomerFormController implements Initializable {
     private boolean fieldsEmpty = true;
     private static String loggedInUserName;
 
+    /**
+     * uses initialize to initialize this scene
+     * @param url the location used to resolve relative paths for the root object, or null if the location is not known
+     * @param rb the resources used to localize the root object, or null if the root object was not localized
+     */
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    public void initialize(URL url, ResourceBundle rb) {
         try {
             loadCountryChoicesInChoiceBox();
 
@@ -52,24 +61,27 @@ public class CustomerFormController implements Initializable {
         }
     }
 
-//    Thread myThread = new Thread() {
-//        @Override
-//        public void run() {
-//            //my code that runs with a loop
-//            //while loop here that runs and needs to execute method every 30 seconds, if condition met continue else break;
-//        };
-//     myThread.start();
-//    }
-
+    /**
+     * gets parent node data
+     * @param form the type of form
+     * @param loggedInUserIDNum logged in user's username
+     */
     public static void getParentNodeData(String form, int loggedInUserIDNum) {
         typeOfForm = form;
         loggedInUserName = UserQuery.getUserNameFromUserID(loggedInUserIDNum);
     }
 
+    /**
+     * gets customer selected data from parent stage table view
+     * @param c the customer object
+     */
     public static void getCustomerChosen(Customer c) {
         customer = c;
     }
 
+    /**
+     * loads add customer form
+     */
     public void loadAddCustomerForm() {
         customerFormTitle.setText("Add Customer");
         customerIDTextField.setText(CustomersQuery.getNextCustomerID());
@@ -78,6 +90,10 @@ public class CustomerFormController implements Initializable {
         saveButton.setText("Add");
     }
 
+    /**
+     * loads update customer form
+     * @throws SQLException if an SQL exception occurs
+     */
     public void loadUpdateCustomerForm() throws SQLException {
         int divisionId = Integer.parseInt(customer.getDivisionID());
         Country country = new Country("1","U.S");
@@ -100,6 +116,10 @@ public class CustomerFormController implements Initializable {
         saveButton.setText("Update");
     }
 
+    /**
+     * loads countries into a combo-box
+     * @throws SQLException if an SQL exception occurs
+     */
     private void loadCountryChoicesInChoiceBox() throws SQLException {
         ObservableList<Country> countries = CountriesQuery.getAllCountries();
         assert countries != null;
@@ -111,8 +131,11 @@ public class CustomerFormController implements Initializable {
         loadDivisionChoicesInChoiceBox();
     }
 
+    /**
+     * handles combo-box selection
+     */
     @FXML
-    void handleCountryChoice() throws SQLException {
+    void handleCountryChoice() {
 //        countriesComboBox.getSelectionModel().getSelectedItem();
         countryChoice = countriesComboBox.getSelectionModel().getSelectedItem();
         loadDivisionChoicesInChoiceBox();
@@ -120,7 +143,10 @@ public class CustomerFormController implements Initializable {
         divisionChoice = divisionComboBox.getSelectionModel().getSelectedItem();
     }
 
-    private void loadDivisionChoicesInChoiceBox() throws SQLException {
+    /**
+     * loads divisions into a combo-box
+     */
+    private void loadDivisionChoicesInChoiceBox() {
         divisionComboBox.getItems().clear();
         ObservableList<Division> divisions = DivisionsQuery.getAllDivisions(countryChoice);
         assert divisions != null;
@@ -148,11 +174,17 @@ public class CustomerFormController implements Initializable {
         }
     }
 
+    /**
+     * handles combo-box selection
+     */
     @FXML
     public void handleDivisionChoice() {
         divisionChoice = divisionComboBox.getSelectionModel().getSelectedItem();
     }
 
+    /**
+     * checks if text-fields are empty
+     */
     private void checkIfFieldsAreEmpty() {
         if(customerNameTextField.getText().isEmpty() ||
                 addressTextField.getText().isEmpty() ||
@@ -170,8 +202,11 @@ public class CustomerFormController implements Initializable {
         }
     }
 
+    /**
+     * handles button click
+     */
     @FXML
-    void handleSaveButton() throws SQLException {
+    void handleSaveButton() {
         checkIfFieldsAreEmpty();
 
         if(!fieldsEmpty) {
@@ -204,6 +239,9 @@ public class CustomerFormController implements Initializable {
 
     }
 
+    /**
+     * handles button click
+     */
     @FXML
     void closeWindow() {
         Stage stage = (Stage) cancelButton.getScene().getWindow();

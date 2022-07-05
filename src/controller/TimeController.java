@@ -7,6 +7,10 @@ import java.time.temporal.TemporalField;
 import java.time.temporal.WeekFields;
 import java.util.Locale;
 
+/**
+ *
+ * @author Alexander Padilla
+ */
 public class TimeController {
     public static DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm a");
     public static DateTimeFormatter timestampFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -29,6 +33,12 @@ public class TimeController {
     public static int minimumTimeDurationMinutes = 15;
     public static LocalDateTime openTime = LocalDateTime.of(estTimeObject.toLocalDate(), LocalTime.of(8,0)).plusSeconds(offsetSecondsTotal);
 
+    /**
+     * gets the first datetime of the month
+     *
+     * @param dateTimeChosen the datetime chosen by user
+     * @return first datetime of the month
+     */
     public static LocalDateTime getFirstOfMonthDateTime(LocalDateTime dateTimeChosen) {
         YearMonth monthOfYear = YearMonth.of(dateTimeChosen.getYear(), dateTimeChosen.getMonth());
         LocalDate firstDateOfMonth = monthOfYear.atDay( 1 );
@@ -38,6 +48,12 @@ public class TimeController {
         return firstOfMonthDateTime;
     }
 
+    /**
+     * gets the last datetime of the month
+     *
+     * @param dateTimeChosen the datetime chosen by user
+     * @return last datetime of the month
+     */
     public static LocalDateTime getLastOfMonthDateTime(LocalDateTime dateTimeChosen) {
         YearMonth monthOfYear = YearMonth.of(dateTimeChosen.getYear(), dateTimeChosen.getMonth());
         LocalDate lastDateOfMonth = monthOfYear.atEndOfMonth();
@@ -47,6 +63,12 @@ public class TimeController {
         return lastOfMonthDateTime;
     }
 
+    /**
+     * gets the start datetime of the week
+     *
+     * @param dateTimeChosen the datetime chosen by user
+     * @return start datetime of the week
+     */
     public static LocalDateTime getStartOfWeekDateTime(LocalDateTime dateTimeChosen) {
         TemporalField wkOfYear = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
         int weekNum = dateTimeChosen.get(wkOfYear);
@@ -70,6 +92,12 @@ public class TimeController {
         return startOfWeekDateTime;
     }
 
+    /**
+     * gets the end datetime of the week
+     *
+     * @param dateTimeChosen the datetime chosen by user
+     * @return end datetime of the week
+     */
     public static LocalDateTime getEndOfWeekDateTime(LocalDateTime dateTimeChosen) {
         TemporalField wkOfYear = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
         int weekNum = dateTimeChosen.get(wkOfYear);
@@ -95,6 +123,13 @@ public class TimeController {
         return closingTime;
     }
 
+    /**
+     * gets the open or close datetime based on the day of the week and timezone
+     *
+     * @param dateTimeChosen the datetime chosen by user
+     * @param gettingOpenTime boolean value that determines if user is getting the open or close time
+     * @return open or close datetime
+     */
     public static LocalDateTime getOpenOrCloseTime(LocalDateTime dateTimeChosen, boolean gettingOpenTime) {
         int offsetHours = offsetSecondsTotal/3600;
         LocalDate dateChosen = dateTimeChosen.toLocalDate();
@@ -132,8 +167,12 @@ public class TimeController {
         return endOfDay;
     }
 
+    /**
+     * finds the next date available
+     *
+     * @return the next date available
+     */
     public static LocalDate nextDateAvailable() {
-//        LocalDateTime startDatetime = TimeController.openTime;
         LocalDateTime timeNow = LocalDateTime.now();
         LocalDateTime startDatetime = getOpenOrCloseTime(timeNow, true);
         LocalDate startDate = startDatetime.toLocalDate();
@@ -174,6 +213,12 @@ public class TimeController {
         return startDate;
     }
 
+    /**
+     * converts given time to UTC time
+     *
+     * @param time the datetime being converted to UTC
+     * @return datetime in UTC
+     */
     public static LocalDateTime getUtcDatetime(LocalDateTime time) {
         OffsetDateTime sys =  time.atOffset(systemOffSet);
         ZonedDateTime zoned = sys.atZoneSameInstant(utcZoneID);
@@ -181,6 +226,12 @@ public class TimeController {
         return zoned.toLocalDateTime();
     }
 
+    /**
+     * converts given time to system's time
+     *
+     * @param time the datetime being converted to UTC
+     * @return datetime in system's time
+     */
     public static LocalDateTime getSystemDatetime(LocalDateTime time) {
         OffsetDateTime utc =  time.atOffset(utcOffSet);
         ZonedDateTime zoned = utc.atZoneSameInstant(systemZoneID);

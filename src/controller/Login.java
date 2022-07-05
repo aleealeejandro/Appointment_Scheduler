@@ -21,12 +21,13 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
 
+/**
+ *
+ * @author Alexander Padilla
+ */
 public class Login implements Initializable {
     private ResourceBundle resourceBundle;
     @FXML private BorderPane mainPanel;
-//    @FXML private Menu languageMenu;
-//    @FXML private CheckMenuItem englishMenuItem;
-//    @FXML private CheckMenuItem frenchMenuItem;
     @FXML private Button loginButton;
     @FXML private Label usernameLabel;
     @FXML private Label passwordLabel;
@@ -35,6 +36,11 @@ public class Login implements Initializable {
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
 
+    /**
+     * uses initialize to initialize this scene
+     * @param url the location used to resolve relative paths for the root object, or null if the location is not known
+     * @param rb the resources used to localize the root object, or null if the root object was not localized
+     */
     public void initialize(URL url, ResourceBundle rb) {
         resourceBundle = ResourceBundle.getBundle("language/language", Locale.getDefault());
 
@@ -50,6 +56,9 @@ public class Login implements Initializable {
         Logger.createFile();
     }
 
+    /**
+     * sets up the stage based on the systems' language default
+     */
     public void setUpStageAccordingToLanguage() {
         usernameLabel.setText(resourceBundle.getString("username"));
         passwordLabel.setText(resourceBundle.getString("password"));
@@ -57,27 +66,21 @@ public class Login implements Initializable {
         timezoneLabel.setText(resourceBundle.getString("time_zone"));
     }
 
+    /**
+     * gets timezone from system and sets timezone label in stage
+     */
     public void getAndSetTimeZone() {
         ZoneId zoneID = ZoneId.systemDefault();
         TimeZone timeZoneObject = TimeZone.getTimeZone(zoneID);
         String timeZone = timeZoneObject.getID().replace('_', ' ');
         localTimezoneLabel.setText(timeZone);
-        System.out.println();
     }
 
-//    @FXML
-//    public void handleLanguageChange(ActionEvent event) {
-//        if(event.getSource().equals(englishMenuItem)) {
-//            englishMenuItem.setSelected(true);
-//            frenchMenuItem.setSelected(false);
-////            resourceBundle.getLocale().;
-//
-//        } else {
-//            englishMenuItem.setSelected(false);
-//            frenchMenuItem.setSelected(true);
-//        }
-//    }
-
+    /**
+     * checks if text-fields are empty
+     * @param username username text-field input
+     * @param password password text-field input
+     */
     private void checkIfFieldsNotEmpty(String username, String password) {
         if(username.isEmpty() || password.isEmpty()) {
             Alert emptyFieldAlert = new Alert(Alert.AlertType.INFORMATION);
@@ -88,8 +91,11 @@ public class Login implements Initializable {
         }
     }
 
+    /**
+     * event handler for when the login button is clicked
+     */
     @FXML
-    void loginButtonClicked(ActionEvent event) {
+    void loginButtonClicked() {
         checkIfFieldsNotEmpty(usernameField.getText(), passwordField.getText());
 
         try {

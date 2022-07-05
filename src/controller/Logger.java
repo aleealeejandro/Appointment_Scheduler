@@ -9,7 +9,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Objects;
 
+/**
+ *
+ * @author Alexander Padilla
+ */
 public class Logger {
+
+    /**
+     * creates a file if the file doesn't already exist
+     */
     public static void createFile() {
         try {
             File file = new File("./login_activity.txt");
@@ -24,6 +32,13 @@ public class Logger {
         }
     }
 
+    /**
+     * logs login entry into file
+     *
+     * @param username username input
+     * @param password password input
+     * @param succeeded logging on successfully boolean value
+     */
     public static void logLoginEntry(String username, String password, boolean succeeded) {
         if(Objects.equals(username, "")) {
             username = "NULL";
@@ -42,6 +57,11 @@ public class Logger {
         }
     }
 
+    /**
+     * logs logout entry into file
+     *
+     * @param username the logged-in user's username
+     */
     public static void logLogout(String username) {
         try {
             FileWriter logWriter = new FileWriter("./login_activity.txt", true);
