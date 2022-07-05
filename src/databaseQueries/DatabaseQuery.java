@@ -4,6 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+/**
+ *
+ * @author Alexander Padilla
+ */
 public class DatabaseQuery {
     private static PreparedStatement preparedStatement;
 
