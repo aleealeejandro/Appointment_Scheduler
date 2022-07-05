@@ -544,7 +544,7 @@ public class MainUIController implements Initializable {
         loadDivisionChoicesInChoiceBox();
     }
 
-    private void loadDivisionChoicesInChoiceBox() throws SQLException {
+    private void loadDivisionChoicesInChoiceBox() {
         filterCustomersByDivisionChoiceBox.getItems().clear();
         ObservableList<Division> divisions = DivisionsQuery.getAllDivisions(countryFilterChoice);
         assert divisions != null;
@@ -563,7 +563,7 @@ public class MainUIController implements Initializable {
     }
 
     @FXML
-    public void handleCustomerCountryChoiceBoxChoice() throws SQLException {
+    public void handleCustomerCountryChoiceBoxChoice() {
         countryFilterChoice = filterCustomersByCountryChoiceBox.getSelectionModel().getSelectedItem();
 
         if(countryFilterChoice.equals("All")) {
@@ -657,7 +657,7 @@ public class MainUIController implements Initializable {
         LocalDateTime dateTime = LocalDateTime.of(monthYear.getYear(), monthYear.getMonth(), 1,0,0);
         LocalDateTime monthStart = TimeController.getFirstOfMonthDateTime(dateTime);
         LocalDateTime monthEnd = TimeController.getLastOfMonthDateTime(dateTime);
-        ObservableList<PieChart.Data> appointmentsByType = AppointmentsQuery.numberOfAppointmentsByMonth(monthStart, monthEnd);
+        ObservableList<PieChart.Data> appointmentsByType = AppointmentsQuery.numberOfAppointmentsByTypeAndMonth(monthStart, monthEnd);
 
         assert appointmentsByType != null;
         if(!appointmentsByType.isEmpty()) {

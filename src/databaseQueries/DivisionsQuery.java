@@ -9,8 +9,19 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ *
+ * @author Alexander Padilla
+ */
 public class DivisionsQuery {
-    public static ObservableList<Division> getAllDivisions(String countryName) throws SQLException {
+
+    /**
+     * gets all the divisions from the database based on the country name
+     *
+     * @param countryName the name of the country
+     * @return list of divisions
+     */
+    public static ObservableList<Division> getAllDivisions(String countryName) {
         Country country = CountriesQuery.getCountryID(countryName);
 
         ObservableList<Division> divisions = FXCollections.observableArrayList();
@@ -40,6 +51,13 @@ public class DivisionsQuery {
         }
     }
 
+    /**
+     * gets country record from the database based on the division ID
+     *
+     * @param divisionId the division ID
+     * @return country object
+     * @throws SQLException if an SQL exception occurs
+     */
     public static Country getCountryFromDivisionID(int divisionId) throws SQLException {
         String query = "SELECT divisions.Country_ID, Country FROM client_schedule.first_level_divisions divisions INNER JOIN client_schedule.countries countries ON divisions.Country_ID = countries.Country_ID WHERE Division_ID=\"" + divisionId + "\";";
 
@@ -63,6 +81,13 @@ public class DivisionsQuery {
         return null;
     }
 
+    /**
+     * gets division record from the database based on the division ID
+     *
+     * @param divisionId the division ID
+     * @return division object
+     * @throws SQLException if an SQL exception occurs
+     */
     public static Division getDivisionFromDivisionID(int divisionId) throws SQLException {
         String query = "SELECT Division_ID, Division FROM client_schedule.first_level_divisions WHERE Division_ID=\"" + divisionId + "\";";
 
@@ -84,7 +109,13 @@ public class DivisionsQuery {
         return null;
     }
 
-    public static Division getDivisionFromDivisionName(String divisionNameString) throws SQLException{
+    /**
+     * gets division record from the database based on the division name
+     *
+     * @param divisionNameString the division name
+     * @return division object
+     */
+    public static Division getDivisionFromDivisionName(String divisionNameString) {
         String query = "SELECT Division_ID, Division FROM client_schedule.first_level_divisions WHERE Division=\"" + divisionNameString + "\";";
 
         try {
@@ -105,7 +136,4 @@ public class DivisionsQuery {
         return null;
     }
 
-//    public static ObservableList<Division> getAllDivisions() throws SQLException {}
-//    public static Division getDivisionID(String divisionName) throws SQLException {}
-//    public static ObservableList<Division> getDivisionsByCountry(String country) throws SQLException {}
 }

@@ -10,7 +10,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ *
+ * @author Alexander Padilla
+ */
 public class CountriesQuery {
+
+    /**
+     * gets all countries from the database
+     *
+     * @return list of countries
+     */
     public static ObservableList<Country> getAllCountries() {
         ObservableList<Country> countries = FXCollections.observableArrayList();
         String query = "SELECT Country_ID, Country FROM client_schedule.countries ORDER BY Country_ID;";
@@ -31,7 +41,13 @@ public class CountriesQuery {
             return null;
         }
     }
-    public static Country getCountryID(String countryChoice) throws SQLException {
+
+    /**
+     * gets countryID from the database based on user selected country name
+     *
+     * @return country ID
+     */
+    public static Country getCountryID(String countryChoice) {
         String query = "SELECT Country_ID, Country FROM client_schedule.countries WHERE Country=\"" + countryChoice + "\";";
 
         try {
@@ -51,23 +67,23 @@ public class CountriesQuery {
         return null;
     }
 
-    public static Country getCountryQuery(int countryId) {
-        String query = "SELECT Country FROM client_schedule.countries WHERE Country=\"" + countryId + "\";";
-
-        try {
-            PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(query);
-            ResultSet result = preparedStatement.executeQuery();
-
-            while(result.next()) {
-                String countryID = result.getString("Country_ID");
-                String countryName = result.getString("Country");
-                return new Country(countryID, countryName);
-            }
-
-        } catch(SQLException err) {
-            System.out.println("Error: " + err.getMessage());
-        }
-
-        return null;
-    }
+//    public static Country getCountryQuery(int countryId) {
+//        String query = "SELECT Country FROM client_schedule.countries WHERE Country=\"" + countryId + "\";";
+//
+//        try {
+//            PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(query);
+//            ResultSet result = preparedStatement.executeQuery();
+//
+//            while(result.next()) {
+//                String countryID = result.getString("Country_ID");
+//                String countryName = result.getString("Country");
+//                return new Country(countryID, countryName);
+//            }
+//
+//        } catch(SQLException err) {
+//            System.out.println("Error: " + err.getMessage());
+//        }
+//
+//        return null;
+//    }
 }

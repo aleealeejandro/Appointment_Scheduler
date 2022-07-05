@@ -9,8 +9,18 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ *
+ * @author Alexander Padilla
+ */
 public class ContactsQuery {
-    public static ObservableList<Contact> getAllContacts() throws SQLException {
+
+    /**
+     * gets all contacts from the database
+     *
+     * @return list of contacts
+     */
+    public static ObservableList<Contact> getAllContacts() {
         ObservableList<Contact> contacts = FXCollections.observableArrayList();
         String query = "SELECT Contact_ID, Contact_Name, Email FROM client_schedule.contacts ORDER BY Contact_ID;";
 

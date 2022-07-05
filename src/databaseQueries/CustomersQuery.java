@@ -11,8 +11,20 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+/**
+ *
+ * @author Alexander Padilla
+ */
 public class CustomersQuery {
 
+    /**
+     * gets all the customers from the database based on country and division
+     *
+     * @param country the name of the country
+     * @param division the name of the division
+     * @return list of customers
+     * @throws SQLException if an SQL exception occurs
+     */
     public static ObservableList<Customer> getAllCustomersByDivision(String country, String division) throws SQLException {
         ObservableList<Customer> customers = FXCollections.observableArrayList();
         String query;
@@ -52,11 +64,17 @@ public class CustomersQuery {
 
             return customers;
         } catch (SQLException err) {
-            err.printStackTrace();
+            System.out.println("Error: " + err.getMessage());
+//            err.printStackTrace();
             return null;
         }
     }
 
+    /**
+     * gets all the customers from the database
+     *
+     * @return list of customers
+     */
     public static ObservableList<Customer> getAllCustomers() {
         ObservableList<Customer> customers = FXCollections.observableArrayList();
 
@@ -88,6 +106,11 @@ public class CustomersQuery {
         }
     }
 
+    /**
+     * gets next customer ID in the database
+     *
+     * @return next customer ID available
+     */
     public static String getNextCustomerID() {
         int nextID = 0;
         String lastCustomerIDQuery = "SELECT MAX(Customer_ID) FROM client_schedule.customers;";
@@ -105,6 +128,13 @@ public class CustomersQuery {
         }
     }
 
+    /**
+     * adds customer to the database
+     *
+     * @param customer the customer object holding information to add to the database
+     * @param loggedInUserName the username of the logged-in user
+     * @return boolean value whether the customer was added to the database successfully
+     */
     public static boolean addCustomer(Customer customer, String loggedInUserName) {
         String query = String.format("INSERT INTO client_schedule.customers VALUES(%s, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', %s);",
                 Integer.parseInt(customer.getCustomerID()),
@@ -124,12 +154,18 @@ public class CustomersQuery {
 
             return addedBoolean == 1;
         } catch (SQLException | RuntimeException err) {
-//            System.out.println(err);
             err.printStackTrace();
             return false;
         }
     }
 
+    /**
+     * updates customer in the database
+     *
+     * @param customer the customer object holding information to update a specific customer in the database
+     * @param loggedInUserName the username of the logged-in user
+     * @return boolean value whether the customer was updated in the database successfully
+     */
     public static boolean updateCustomer(Customer customer, String loggedInUserName) {
         String query = String.format("UPDATE client_schedule.customers SET Customer_Name='%s', Address='%s', Postal_Code='%s', Phone='%s',Last_Update='%s', Last_Updated_By='%s', Division_ID=%s WHERE Customer_ID=%s;",
                 customer.getCustomerName(),
@@ -154,6 +190,12 @@ public class CustomersQuery {
         }
     }
 
+    /**
+     * deletes a customer in the database
+     *
+     * @param customerID the customer ID to search for in database
+     * @return boolean value whether the customer was deleted or not
+     */
     public static boolean deleteCustomer(String customerID) {
         String query = String.format("DELETE FROM client_schedule.customers WHERE Customer_ID=%s", customerID);
         try {
@@ -162,7 +204,6 @@ public class CustomersQuery {
 
             return deleteBool == 1;
         } catch (SQLException | RuntimeException err) {
-//            System.out.println(err);
             err.printStackTrace();
             return false;
         }

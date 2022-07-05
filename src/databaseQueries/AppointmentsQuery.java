@@ -21,11 +21,13 @@ import java.util.HashMap;
 public class AppointmentsQuery {
 
     /**
-     * gets all appointments based on user selected filter and datetime
+     * gets all appointments from database based on user selected filter and datetime chosen
      *
      * @param filterBy filter type for query chosen by the user
      * @param timeNow datetime when getAllAppointments() was called
      * @param dateTimeChosen datetime that user chose
+     * @return list of appointments
+     * @throws SQLException if an SQL exception occurs
      */
     public static ObservableList<Appointment> getAllAppointments(String filterBy, LocalDateTime timeNow, LocalDateTime dateTimeChosen) throws SQLException {
         String timeNowString = TimeController.getUtcDatetime(timeNow).format(TimeController.timestampFormatter);
@@ -99,6 +101,12 @@ public class AppointmentsQuery {
         }
     }
 
+    /**
+     * deletes appointment in database
+     *
+     * @param appointmentID the appointment ID to search for in database
+     * @return boolean value whether the appointment was deleted or not
+     */
     public static boolean deleteAppointment(String appointmentID) {
         String query = "DELETE FROM client_schedule.appointments WHERE Appointment_ID=\"" + appointmentID + "\";";
         try {
@@ -112,6 +120,13 @@ public class AppointmentsQuery {
         }
     }
 
+    /**
+     * checks if appointment overlaps pre-existing appointments or exists already in the database
+     *
+     * @param startDatetime the start of the appointment to use in the query
+     * @param endDatetime the end of the appointment to use in the query
+     * @return boolean value whether the appointment already exists or overlaps existing appointments in database
+     */
     public static boolean appointmentOverlapsOrExists(LocalDateTime startDatetime, LocalDateTime endDatetime) {
         startDatetime = TimeController.getUtcDatetime(startDatetime);
         endDatetime = TimeController.getUtcDatetime(endDatetime);
@@ -144,6 +159,13 @@ public class AppointmentsQuery {
         }
     }
 
+    /**
+     * gets all the appointments for the given day from the database
+     *
+     * @param startDatetime the start of the day to use in the query
+     * @param endDatetime the end of the day to use in the query
+     * @return list of appointments for the specific date
+     */
     public static ObservableList<Appointment> getAppointmentsForDay(LocalDateTime startDatetime, LocalDateTime endDatetime) {
         ObservableList<Appointment> setAppointments = FXCollections.observableArrayList();
         startDatetime = TimeController.getUtcDatetime(startDatetime);
@@ -174,6 +196,13 @@ public class AppointmentsQuery {
         }
     }
 
+    /**
+     * adds appointment to the database
+     *
+     * @param appointment the appointment object holding information to add to the database
+     * @param loggedInUserName the username of the logged-in user
+     * @return boolean value whether the appointment was added to the database successfully
+     */
     public static boolean addAppointment(Appointment appointment, String loggedInUserName) {
         LocalTime startTime = LocalTime.parse(appointment.getStartTime(), TimeController.timeFormatter);
         LocalTime endTime = LocalTime.parse(appointment.getEndTime(), TimeController.timeFormatter);
@@ -204,11 +233,18 @@ public class AppointmentsQuery {
 
             return addedBoolean == 1;
         } catch (SQLException | RuntimeException err) {
-//            System.out.println(err);
             err.printStackTrace();
             return false;
         }
     }
+
+    /**
+     * updates appointment in the database
+     *
+     * @param appointment the appointment object holding information to update a specific appointment in the database
+     * @param loggedInUserName the username of the logged-in user
+     * @return boolean value whether the appointment was updated in the database successfully
+     */
     public static boolean updateAppointment(Appointment appointment, String loggedInUserName) {
         LocalTime startTime = LocalTime.parse(appointment.getStartTime(), TimeController.timeFormatter);
         LocalTime endTime = LocalTime.parse(appointment.getEndTime(), TimeController.timeFormatter);
@@ -245,6 +281,11 @@ public class AppointmentsQuery {
         }
     }
 
+    /**
+     * gets next appointment ID in the database
+     *
+     * @return next appointment ID available
+     */
     public static String getNextAppointmentID() {
         int nextID = 0;
         String query = "SELECT MAX(Appointment_ID) FROM client_schedule.appointments;";
@@ -262,6 +303,13 @@ public class AppointmentsQuery {
         }
     }
 
+    /**
+     * queries database to check if there are any appointments within fifteen minutes
+     *
+     * @param timeNow the time when checkIfAppointmentWithinFifteenMinutes() was called
+     * @param fifteenMinutesFromNow fifteen minutes after timeNow parameter
+     * @return number of appointments within fifteen minutes
+     */
     public static int checkIfAppointmentWithinFifteenMinutes(LocalDateTime timeNow, LocalDateTime fifteenMinutesFromNow) {
         timeNow = TimeController.getUtcDatetime(timeNow);
         fifteenMinutesFromNow = TimeController.getUtcDatetime(fifteenMinutesFromNow);
@@ -280,7 +328,6 @@ public class AppointmentsQuery {
                 count = resultSet.getInt(1);
             }
 
-            // returns true or false
             return count;
         } catch(SQLException e) {
             e.printStackTrace();
@@ -288,7 +335,14 @@ public class AppointmentsQuery {
         }
     }
 
-    public static ObservableList<PieChart.Data> numberOfAppointmentsByMonth(LocalDateTime monthStart, LocalDateTime monthEnd) {
+    /**
+     * queries database for different appointment types for a specific month
+     *
+     * @param monthStart the start of the month
+     * @param monthEnd the end of the month
+     * @return data for a pie chart
+     */
+    public static ObservableList<PieChart.Data> numberOfAppointmentsByTypeAndMonth(LocalDateTime monthStart, LocalDateTime monthEnd) {
         monthStart = TimeController.getUtcDatetime(monthStart);
         monthEnd = TimeController.getUtcDatetime(monthEnd).minusMinutes(1);
         String query = "SELECT Type, COUNT(Appointment_ID) FROM client_schedule.appointments WHERE Start BETWEEN ? AND ? GROUP BY Type ORDER BY COUNT(Appointment_ID) DESC;";
