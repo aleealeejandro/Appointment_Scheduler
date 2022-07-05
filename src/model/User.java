@@ -10,6 +10,12 @@ public class User {
     private String userName;
     private String password;
 
+    /**
+     * User constructor()
+     *
+     * @param userID the id of the specific user based on the
+     * @param userName the username of the user
+     */
     public User(int userID, String userName) {
         this.userID = userID;
         this.userName = userName;
@@ -17,14 +23,14 @@ public class User {
 
 
     /**
-     * @return user's id number
+     * @return user's ID number
      */
     public int getUserID() {
         return userID;
     }
 
     /**
-     * @param userID user's id number to set
+     * @param userID user's ID number to set
      */
     public void setUserID(int userID) {
         this.userID = userID;

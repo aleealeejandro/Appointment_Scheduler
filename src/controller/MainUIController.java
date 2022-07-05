@@ -129,13 +129,6 @@ public class MainUIController implements Initializable {
         }
     }
 
-//    public static void appointmentEndedAlready(Appointment appointment) {
-//
-////        if(endedAlready) {
-////            System.out.println();
-////        }
-//    }
-
     private void loadAppointmentFilterChoices() {
         filterAppointmentsByChoiceBox.getItems().addAll("All", "Month", "Week", "Day", "Today", "My Appointments");
         filterAppointmentsByChoiceBox.getSelectionModel().selectFirst();
@@ -684,6 +677,9 @@ public class MainUIController implements Initializable {
     public void handlePieSliceClicked() {
         Label caption = new Label("work already");
 //        ((Group) mainPanel.getScene().getRoot()).getChildren().add(caption); // Add me
+//        appointmentTypesPieChart.ge;
+//        root.getChildren().add(caption);
+
         caption.setTextFill(Color.BLACK);
         caption.setStyle("-fx-font: 24 arial;");
 
@@ -694,7 +690,6 @@ public class MainUIController implements Initializable {
 //            ((Group) mainPanel.getScene().getRoot()).getChildren().add(caption); // Add me
 
             data.getNode().addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
-//                ((Group) appointmentTypesPieChart.getScene().getRoot()).getChildren().add(caption); // Add me
 //                System.out.println("you clicked me " + (int) data.getPieValue() + " " + data.getName());
 //                caption.setTranslateX(e.getSceneX());
 //                caption.setTranslateY(e.getSceneY());

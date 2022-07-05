@@ -14,7 +14,19 @@ import java.sql.*;
 import java.time.*;
 import java.util.HashMap;
 
+/**
+ *
+ * @author Alexander Padilla
+ */
 public class AppointmentsQuery {
+
+    /**
+     * gets all appointments based on user selected filter and datetime
+     *
+     * @param filterBy filter type for query chosen by the user
+     * @param timeNow datetime when getAllAppointments() was called
+     * @param dateTimeChosen datetime that user chose
+     */
     public static ObservableList<Appointment> getAllAppointments(String filterBy, LocalDateTime timeNow, LocalDateTime dateTimeChosen) throws SQLException {
         String timeNowString = TimeController.getUtcDatetime(timeNow).format(TimeController.timestampFormatter);
         ObservableList<Appointment> appointments = FXCollections.observableArrayList();
@@ -294,7 +306,7 @@ public class AppointmentsQuery {
             }
 
             if(pieChartData.isEmpty()) {
-                pieChartData.add(new PieChart.Data("No appointments scheduled for this month", 1));
+                pieChartData.add(new PieChart.Data("No appointments scheduled for this month", 0));
             }
 
             return pieChartData;
