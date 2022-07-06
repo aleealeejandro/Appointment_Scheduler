@@ -21,11 +21,11 @@ import model.Appointment;
 import model.Country;
 import model.Customer;
 import model.Division;
-
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.*;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
@@ -49,7 +49,7 @@ public class MainUIController implements Initializable {
     @FXML public DatePicker appointmentDatePickerField;
     @FXML public Label tableFilterLabel;
     @FXML public PieChart appointmentTypesPieChart;
-    @FXML public ListView<LocalDate> fullyBookedDatesListView;
+    @FXML public ListView<String> fullyBookedDatesListView;
     @FXML public ComboBox<String> reportsByMonthComboBox;
     @FXML private AnchorPane mainPanel;
     @FXML private Button addAppointmentButton;
@@ -62,18 +62,16 @@ public class MainUIController implements Initializable {
     @FXML public TableView<Appointment> appointmentsTable;
     @FXML public TableView<Customer> customersTable;
     @FXML public Button refreshCustomerTableButton;
-    @FXML public static Button refreshAppointmentTableButton;
     private String appointmentFilterChoiceBoxChoice;
     private String searchAppointmentsByChoiceBoxChoice;
-//    private String customerSearchFilterChoiceBoxChoice;
     public static int loggedInUserID;
     private static String loggedInUsername;
-
     private String countryFilterChoice;
     private String divisionFilterChoice;
     private LocalDate dateChosen;
     @FXML public TextField searchAppointmentsTextField;
     public static LocalDateTime timeRightNow;
+    private static final HashSet<String> fullyScheduledDates = new HashSet<>();
 
     /**
      * uses initialize to initialize this scene
@@ -81,6 +79,8 @@ public class MainUIController implements Initializable {
      * @param rb the resources used to localize the root object, or null if the root object was not localized
      */
     public void initialize(URL url, ResourceBundle rb) {
+        fullyScheduledDates.clear();
+
         tabPane.setTabMinWidth(75);
         tabPane.setTabMinHeight(25);
         dateChosen = LocalDate.now().plusDays(1);
@@ -106,7 +106,7 @@ public class MainUIController implements Initializable {
         disableUpdateAndDeleteCustomerButtons();
         appointmentWithinFifteenMinutes(AppointmentsQuery.checkIfAppointmentWithinFifteenMinutes(LocalDateTime.now(), LocalDateTime.now().plusMinutes(15)));
         loadMonthsInComboBox();
-
+        loadFullyBookedDatesReport();
     }
 
     /**
@@ -312,6 +312,7 @@ public class MainUIController implements Initializable {
                 loadFilteredAppointmentsTable();
                 searchAppointmentsTextField.clear();
                 numberOfAppointmentsReport();
+                loadFullyBookedDatesReport();
             }
 
         } else {
@@ -335,6 +336,7 @@ public class MainUIController implements Initializable {
                     searchAppointmentsTextField.clear();
                     disableUpdateAndDeleteAppointmentButtons();
                     numberOfAppointmentsReport();
+                    loadFullyBookedDatesReport();
                 }
             }
 
@@ -827,6 +829,132 @@ public class MainUIController implements Initializable {
 //                caption.setVisible(false);
 //            });
         }
+    }
 
+    /**
+     * checks if time slots are available for the day
+     *
+     * @param appointmentDuration duration of the appointment
+     * @param date date of appointment
+     * @return boolean value regarding time slots availability
+     */
+    public boolean timeSlotsAvailable(int appointmentDuration, LocalDate date) {
+//        dateChosen = datePickerField.getValue();
+        LocalDateTime oneHourFromNow = LocalDateTime.now().plusHours(1);
+        LocalDateTime startDateTime = LocalDateTime.of(date, LocalTime.now());
+        startDateTime = TimeController.getOpenOrCloseTime(startDateTime, true);
+        LocalDateTime endDateTime = TimeController.getOpenOrCloseTime(startDateTime, false);
+
+        LocalDateTime startOfAppointment = startDateTime;
+        LocalDateTime endOfAppointment;
+
+        int offsetHours = TimeController.offsetSecondsTotal/3600;
+        LocalDateTime secondShiftBeginning = LocalDateTime.of(date, TimeController.openTime.toLocalTime());
+        LocalDateTime secondShiftEnding = LocalDateTime.of(date.plusDays(1), LocalTime.of(0, 0));
+
+        LocalDateTime breakBeginning = secondShiftBeginning.minusHours(TimeController.amountOfHoursOfficeIsClosed);
+        LocalDateTime breakEnding = secondShiftBeginning;
+
+        LocalDateTime firstShiftBeginning = LocalDateTime.of(date, LocalTime.of(0, 0));
+        LocalDateTime firstShiftEnding = breakBeginning;
+
+        if(offsetHours >= 3 && offsetHours <= 15) {
+            if (date.getDayOfWeek().equals(DayOfWeek.MONDAY)) {
+                startOfAppointment = secondShiftBeginning;
+                endDateTime = secondShiftEnding;
+            } else if (date.getDayOfWeek().equals(DayOfWeek.SATURDAY)) {
+                startOfAppointment = firstShiftBeginning;
+                endDateTime = firstShiftEnding;
+            } else {
+                startOfAppointment = firstShiftBeginning;
+                endDateTime = secondShiftEnding;
+            }
+        }
+
+//        HashSet<Boolean> existsSet = new HashSet<>();
+        boolean slotExists;
+
+        while (startOfAppointment.isBefore(endDateTime)) {
+            if (startOfAppointment.isAfter(endDateTime.minusMinutes(appointmentDuration))) {
+                break;
+            }
+
+            endOfAppointment = startOfAppointment.plusMinutes(appointmentDuration).minusMinutes(1);
+
+            if(startOfAppointment.isBefore(oneHourFromNow) && date.equals(LocalDate.now())) {
+//            if(date.equals(LocalDate.now()) && startOfAppointment.isBefore(oneHourFromNow)) {
+                startOfAppointment = startOfAppointment.plusMinutes(TimeController.minimumTimeDurationMinutes);
+                continue;
+            }
+
+            if(offsetHours >= 3 && offsetHours <= 15 && startOfAppointment.isEqual(breakBeginning)) {
+                if(!date.getDayOfWeek().equals(DayOfWeek.MONDAY) && !date.getDayOfWeek().equals(DayOfWeek.SATURDAY)) {
+                    startOfAppointment = breakEnding;
+                }
+            }
+
+            slotExists = AppointmentsQuery.appointmentOverlapsOrExists(startOfAppointment, endOfAppointment);
+//            existsSet.add(slotExists);
+
+            if(!slotExists) {
+//            if(existsSet.contains(false)) {
+                return false;
+            }
+
+            startOfAppointment = startOfAppointment.plusMinutes(TimeController.minimumTimeDurationMinutes);
+        }
+        return true;
+    }
+
+    /**
+     * finds all dates that are fully booked
+     */
+    public void findAllDatesThatAreFullyBookedForAYear() {
+        LocalDate date = LocalDate.now();
+        LocalDate oneYearFromNow = date.plusYears(1);
+
+        while(!date.isEqual(oneYearFromNow)) {
+            int offsetHours = TimeController.offsetSecondsTotal/3600;
+
+            if(offsetHours >= 16) {
+                if(date.getDayOfWeek() == DayOfWeek.SUNDAY || date.getDayOfWeek() == DayOfWeek.MONDAY) {
+                    date = date.plusDays(1);
+                    continue;
+                }
+            } else if(offsetHours >= 3) {
+                if(date.getDayOfWeek() == DayOfWeek.SUNDAY) {
+                    date = date.plusDays(1);
+                    continue;
+                }
+            } else {
+                if(date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY) {
+                    date = date.plusDays(1);
+                    continue;
+                }
+            }
+
+            boolean fifteenMinuteSlotIsNotAvailable = timeSlotsAvailable(TimeController.minimumTimeDurationMinutes, date);
+
+            if(fifteenMinuteSlotIsNotAvailable) {
+                fullyScheduledDates.add(date.format(TimeController.dateFormatter));
+                System.out.println("fifteen Minute Slots not Available on " + date);
+            }
+
+            date = date.plusDays(1);
+        }
+    }
+
+    public void loadFullyBookedDatesReport() {
+        fullyScheduledDates.clear();
+
+        findAllDatesThatAreFullyBookedForAYear();
+
+        fullyBookedDatesListView.getItems().clear();
+
+        if(!fullyScheduledDates.isEmpty()) {
+            for (String date : fullyScheduledDates) {
+                fullyBookedDatesListView.getItems().add(date);
+            }
+        }
     }
 }
