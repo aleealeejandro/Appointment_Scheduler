@@ -58,8 +58,8 @@ public class Login implements Initializable {
      */
     public void setTextFieldEventHandlers() {
         int maxCharacters = 50;
-        usernameField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters, "regular"));
-        passwordField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters, "password"));
+        usernameField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.setMaxLengthAndPattern(maxCharacters, "regular"));
+        passwordField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.setMaxLengthAndPattern(maxCharacters, "password"));
     }
     /**
      * sets up the stage based on the systems' language default

@@ -69,10 +69,10 @@ public class CustomerFormController implements Initializable {
      */
     public void setTextFieldEventHandlers() {
         int maxCharacters = 50;
-        customerNameTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters, "regular"));
-        addressTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(100, "regular"));
-        postalCodeTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters, "regular"));
-        phoneNumberTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters, "regular"));
+        customerNameTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.setMaxLengthAndPattern(maxCharacters, "regular"));
+        addressTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.setMaxLengthAndPattern(100, "regular"));
+        postalCodeTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.setMaxLengthAndPattern(maxCharacters, "regular"));
+        phoneNumberTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.setMaxLengthAndPattern(maxCharacters, "regular"));
     }
 
     /**

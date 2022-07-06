@@ -21,7 +21,7 @@ public class TextFieldHandler {
      * @param type type of text-field
      * @return event handler for text field
      */
-    public static EventHandler<KeyEvent> maxLengthTextField(final Integer i, String type) {
+    public static EventHandler<KeyEvent> setMaxLengthAndPattern(final Integer i, String type) {
         return new EventHandler<>() {
             @Override
             public void handle(KeyEvent e) {
@@ -53,6 +53,7 @@ public class TextFieldHandler {
                         return null;
                     }
                 };
+
                 TextFormatter<String> formatter = new TextFormatter<>(filter);
                 txtField.setTextFormatter(formatter);
             }
