@@ -1,8 +1,6 @@
 package controller;
 
-import databaseQueries.AppointmentsQuery;
 import databaseQueries.UserQuery;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -12,11 +10,9 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -62,8 +58,8 @@ public class Login implements Initializable {
      */
     public void setTextFieldEventHandlers() {
         int maxCharacters = 50;
-        usernameField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters));
-        passwordField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters));
+        usernameField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters, "regular"));
+        passwordField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters, "password"));
     }
     /**
      * sets up the stage based on the systems' language default

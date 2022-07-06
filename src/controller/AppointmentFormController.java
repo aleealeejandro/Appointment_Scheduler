@@ -87,10 +87,10 @@ public class AppointmentFormController implements Initializable {
      */
     public void setTextFieldEventHandlers() {
         int maxCharacters = 50;
-        titleTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters));
-        descriptionTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters));
-        locationTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters));
-        typeTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters));
+        titleTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters, "regular"));
+        descriptionTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters, "regular"));
+        locationTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters, "regular"));
+        typeTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters, "regular"));
     }
 
     /**

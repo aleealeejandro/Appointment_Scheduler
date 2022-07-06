@@ -69,10 +69,10 @@ public class CustomerFormController implements Initializable {
      */
     public void setTextFieldEventHandlers() {
         int maxCharacters = 50;
-        customerNameTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters));
-        addressTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(100));
-        postalCodeTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters));
-        phoneNumberTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters));
+        customerNameTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters, "regular"));
+        addressTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(100, "regular"));
+        postalCodeTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters, "regular"));
+        phoneNumberTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters, "regular"));
     }
 
     /**
@@ -150,7 +150,6 @@ public class CustomerFormController implements Initializable {
      */
     @FXML
     void handleCountryChoice() {
-//        countriesComboBox.getSelectionModel().getSelectedItem();
         countryChoice = countriesComboBox.getSelectionModel().getSelectedItem();
         loadDivisionChoicesInChoiceBox();
         divisionComboBox.getSelectionModel().selectFirst();
