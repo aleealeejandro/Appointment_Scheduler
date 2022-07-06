@@ -5,11 +5,11 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import model.*;
-
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.*;
@@ -60,8 +60,10 @@ public class AppointmentFormController implements Initializable {
         timeDurationChoice = "15 minutes";
         duration = TimeController.minimumTimeDurationMinutes;
 
+        setTextFieldEventHandlers();
         disableDatesOnDatePicker();
         datePickerListener();
+
         try {
 //            loadTimeDurationComboBox();
 //            loadStartTimesComboBox();
@@ -78,6 +80,17 @@ public class AppointmentFormController implements Initializable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * sets the event handlers for the form text fields
+     */
+    public void setTextFieldEventHandlers() {
+        int maxCharacters = 50;
+        titleTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters));
+        descriptionTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters));
+        locationTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters));
+        typeTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters));
     }
 
     /**

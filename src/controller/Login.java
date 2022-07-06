@@ -9,6 +9,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -44,7 +45,7 @@ public class Login implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         resourceBundle = ResourceBundle.getBundle("language/language", Locale.getDefault());
 
-//        englishMenuItem.setSelected(true);
+        setTextFieldEventHandlers();
         usernameField.setText("test");
         passwordField.setText("test");
         getAndSetTimeZone();
@@ -56,6 +57,14 @@ public class Login implements Initializable {
         Logger.createFile();
     }
 
+    /**
+     * sets the event handlers for the form text fields
+     */
+    public void setTextFieldEventHandlers() {
+        int maxCharacters = 50;
+        usernameField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters));
+        passwordField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters));
+    }
     /**
      * sets up the stage based on the systems' language default
      */

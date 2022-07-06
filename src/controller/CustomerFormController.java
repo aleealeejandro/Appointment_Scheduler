@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import model.Country;
@@ -47,6 +48,8 @@ public class CustomerFormController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        setTextFieldEventHandlers();
+
         try {
             loadCountryChoicesInChoiceBox();
 
@@ -59,6 +62,17 @@ public class CustomerFormController implements Initializable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * sets the event handlers for the form text fields
+     */
+    public void setTextFieldEventHandlers() {
+        int maxCharacters = 50;
+        customerNameTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters));
+        addressTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(100));
+        postalCodeTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters));
+        phoneNumberTextField.addEventFilter(KeyEvent.KEY_TYPED, TextFieldHandler.maxLengthTextField(maxCharacters));
     }
 
     /**

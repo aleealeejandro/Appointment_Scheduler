@@ -907,7 +907,7 @@ public class MainUIController implements Initializable {
     }
 
     /**
-     * finds all dates that are fully booked
+     * finds all dates that are fully booked for a year
      */
     public void findAllDatesThatAreFullyBookedForAYear() {
         LocalDate date = LocalDate.now();
@@ -944,6 +944,9 @@ public class MainUIController implements Initializable {
         }
     }
 
+    /**
+     * loads fully booked dates report
+     */
     public void loadFullyBookedDatesReport() {
         fullyScheduledDates.clear();
 
