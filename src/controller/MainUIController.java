@@ -14,7 +14,6 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import model.Appointment;
@@ -124,10 +123,7 @@ public class MainUIController implements Initializable {
      * runs task on every 10 seconds
      */
     private static void runTask() {
-//        loadFilteredAppointmentsTable();
         timeRightNow = LocalDateTime.now();
-//        System.out.println(timeRightNow.format(TimeController.timestampFormatter) + "   Running the task every 10 seconds.");
-
     }
 
     /**
@@ -152,8 +148,6 @@ public class MainUIController implements Initializable {
         filterAppointmentsByChoiceBox.getItems().addAll("All", "Month", "Week", "Day", "Today", "My Appointments");
         filterAppointmentsByChoiceBox.getSelectionModel().selectFirst();
         appointmentFilterChoiceBoxChoice = filterAppointmentsByChoiceBox.getSelectionModel().getSelectedItem();
-
-//        loadFilteredAppointmentsTable();
     }
 
     /**
@@ -163,8 +157,6 @@ public class MainUIController implements Initializable {
         searchAppointmentsByChoiceBox.getItems().addAll("Contact", "Type");
         searchAppointmentsByChoiceBox.getSelectionModel().selectFirst();
         searchAppointmentsByChoiceBoxChoice = searchAppointmentsByChoiceBox.getSelectionModel().getSelectedItem();
-
-//        loadFilteredAppointmentsTable();
     }
 
     /**
@@ -173,7 +165,6 @@ public class MainUIController implements Initializable {
     private void loadCustomerChoiceBoxChoices() {
         searchCustomersByChoiceBox.getItems().addAll("Customer ID", "Name", "Division ID");
         searchCustomersByChoiceBox.getSelectionModel().selectFirst();
-//        customerSearchFilterChoiceBoxChoice = searchCustomersByChoiceBox.getSelectionModel().getSelectedItem();
 
         loadFilteredCustomersTable();
     }
@@ -220,7 +211,6 @@ public class MainUIController implements Initializable {
                 enableUpdateAndDeleteAppointmentButtons();
             }
         }
-//        assert appointment != null;
 
     }
 
@@ -419,7 +409,6 @@ public class MainUIController implements Initializable {
     @FXML
     public void handleAppointmentFilterChoice() {
         appointmentFilterChoiceBoxChoice = filterAppointmentsByChoiceBox.getSelectionModel().getSelectedItem();
-//        loadFilteredAppointmentsTable();
 
         if(appointmentFilterChoiceBoxChoice != null && (appointmentFilterChoiceBoxChoice.equals("All") || appointmentFilterChoiceBoxChoice.equals("Today") || appointmentFilterChoiceBoxChoice.equals("My Appointments"))) {
             appointmentDatePickerField.setValue(null);
@@ -682,11 +671,9 @@ public class MainUIController implements Initializable {
         countryFilterChoice = filterCustomersByCountryChoiceBox.getSelectionModel().getSelectedItem();
 
         if(countryFilterChoice.equals("All")) {
-//            filterCustomersByDivisionChoiceBox.setDisable(true);
             filterCustomersByDivisionChoiceBox.setVisible(false);
             divisionLabel.setVisible(false);
         } else {
-//            filterCustomersByDivisionChoiceBox.setDisable(false);
             filterCustomersByDivisionChoiceBox.setVisible(true);
             divisionLabel.setVisible(true);
         }
@@ -799,35 +786,11 @@ public class MainUIController implements Initializable {
      * loads tooltip to pie graph slices when hovering over a pie slice
      */
     public void handlePieSliceHovered() {
-        Label caption = new Label("work already");
-//        ((Group) mainPanel.getScene().getRoot()).getChildren().add(caption); // Add me
-//        appointmentTypesPieChart.ge;
-//        root.getChildren().add(caption);
-
-        caption.setTextFill(Color.BLACK);
-        caption.setStyle("-fx-font: 24 arial;");
-
-
         for(final PieChart.Data data : appointmentTypesPieChart.getData()) {
-//            Tooltip tooltip = new Tooltip(String.valueOf(data.getPieValue()));
-//            Tooltip.install(data.getNode(), tooltip);
-//            ((Group) mainPanel.getScene().getRoot()).getChildren().add(caption); // Add me
-
             data.getNode().addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
-//                System.out.println("you clicked me " + (int) data.getPieValue() + " " + data.getName());
-//                caption.setTranslateX(e.getSceneX());
-//                caption.setTranslateY(e.getSceneY());
-//                caption.setText(String.format("%s %s", (int) data.getPieValue(), data.getName()));
-//                caption.setVisible(true);
                 Tooltip tooltip = new Tooltip(data.getName() + " - " + (int) data.getPieValue());
                 Tooltip.install(data.getNode(), tooltip);
             });
-//            data.getNode().addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
-//                System.out.println("you clicked me " + (int) data.getPieValue() + " " + data.getName());
-//                caption.setTranslateX(e.getSceneX());
-//                caption.setTranslateY(e.getSceneY());
-//                caption.setVisible(false);
-//            });
         }
     }
 
@@ -839,7 +802,6 @@ public class MainUIController implements Initializable {
      * @return boolean value regarding time slots availability
      */
     public boolean timeSlotsAvailable(int appointmentDuration, LocalDate date) {
-//        dateChosen = datePickerField.getValue();
         LocalDateTime oneHourFromNow = LocalDateTime.now().plusHours(1);
         LocalDateTime startDateTime = LocalDateTime.of(date, LocalTime.now());
         startDateTime = TimeController.getOpenOrCloseTime(startDateTime, true);
@@ -937,7 +899,6 @@ public class MainUIController implements Initializable {
 
             if(fifteenMinuteSlotIsNotAvailable) {
                 fullyScheduledDates.add(date.format(TimeController.dateFormatter));
-                System.out.println("fifteen Minute Slots not Available on " + date);
             }
 
             date = date.plusDays(1);
