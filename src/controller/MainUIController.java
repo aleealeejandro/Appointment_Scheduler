@@ -48,6 +48,7 @@ public class MainUIController implements Initializable {
     @FXML public TableView<Appointment> contactScheduleTable;
     @FXML public ChoiceBox<String> filterAppointmentsByContactsChoiceBox;
     @FXML public Label reportsTableFilterLabel;
+    @FXML public Label totalAppointmentsLabel;
     @FXML private AnchorPane mainPanel;
     @FXML private Button addAppointmentButton;
     @FXML private Button updateAppointmentButton;
@@ -308,6 +309,7 @@ public class MainUIController implements Initializable {
                 searchAppointmentsTextField.clear();
                 numberOfAppointmentsReport();
                 loadFullyBookedDatesReport();
+                loadContactScheduleTableReport();
             }
 
         } else {
@@ -332,6 +334,7 @@ public class MainUIController implements Initializable {
                     disableUpdateAndDeleteAppointmentButtons();
                     numberOfAppointmentsReport();
                     loadFullyBookedDatesReport();
+                    loadContactScheduleTableReport();
                 }
             }
 
@@ -950,5 +953,11 @@ public class MainUIController implements Initializable {
         String contactID = filterAppointmentsByContactsChoiceBox.getSelectionModel().getSelectedItem();
         ObservableList<Appointment> contactSchedule = AppointmentsQuery.getAllAppointmentsByContact(LocalDateTime.now(), contactID);
         contactScheduleTable.setItems(contactSchedule);
+
+        if(contactSchedule != null) {
+            totalAppointmentsLabel.setText(String.format("Total Appointments: %s", contactSchedule.size()));
+        } else {
+            totalAppointmentsLabel.setText("There are no appointments for this contact.");
+        }
     }
 }

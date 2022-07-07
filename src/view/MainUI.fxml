@@ -320,7 +320,7 @@
 
                             </HBox>
 
-                            <TableView prefHeight="490.0" prefWidth="855.0" BorderPane.alignment="CENTER" fx:id="contactScheduleTable">
+                            <TableView prefHeight="300.0" prefWidth="855.0" BorderPane.alignment="CENTER" fx:id="contactScheduleTable">
                                 <columns>
                                     <TableColumn text="Appointment ID">
                                         <cellValueFactory>
@@ -402,6 +402,11 @@
 
                                 </columns>
                             </TableView>
+                            <Label fx:id="totalAppointmentsLabel">
+                                <VBox.margin>
+                                    <Insets left="10.0" right="10.0" top="15" bottom="30"/>
+                                </VBox.margin>
+                            </Label>
                         </VBox>
                     </ScrollPane>
                 </Tab>
