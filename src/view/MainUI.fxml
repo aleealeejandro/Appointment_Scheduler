@@ -3,11 +3,10 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.*?>
-
 <?import javafx.geometry.Insets?>
-
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.chart.PieChart?>
+
 <AnchorPane fx:id="mainPanel"
             xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
@@ -62,23 +61,23 @@
                                                 </cellValueFactory>
                                             </TableColumn>
 
-                                            <TableColumn minWidth="0.0" prefWidth="120.0" text="Date">
-                                                <cellValueFactory>
-                                                    <PropertyValueFactory property="startDate"/>
-                                                </cellValueFactory>
-                                            </TableColumn>
-
-<!--                                            <TableColumn minWidth="0.0" prefWidth="120.0" text="Start Date">-->
+<!--                                            <TableColumn minWidth="0.0" prefWidth="120.0" text="Date">-->
 <!--                                                <cellValueFactory>-->
 <!--                                                    <PropertyValueFactory property="startDate"/>-->
 <!--                                                </cellValueFactory>-->
 <!--                                            </TableColumn>-->
 
-<!--                                            <TableColumn minWidth="0.0" prefWidth="120.0" text="End Date">-->
-<!--                                                <cellValueFactory>-->
-<!--                                                    <PropertyValueFactory property="endDate"/>-->
-<!--                                                </cellValueFactory>-->
-<!--                                            </TableColumn>-->
+                                            <TableColumn minWidth="0.0" prefWidth="120.0" text="Start Date">
+                                                <cellValueFactory>
+                                                    <PropertyValueFactory property="startDate"/>
+                                                </cellValueFactory>
+                                            </TableColumn>
+
+                                            <TableColumn minWidth="0.0" prefWidth="120.0" text="End Date">
+                                                <cellValueFactory>
+                                                    <PropertyValueFactory property="endDate"/>
+                                                </cellValueFactory>
+                                            </TableColumn>
 
                                             <TableColumn minWidth="0.0" prefWidth="120" text="Type">
                                                 <cellValueFactory>
@@ -152,20 +151,6 @@
                                         </GridPane.margin>
                                     </TextField>
                                 </GridPane>
-
-<!--                                <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="855.0" BorderPane.alignment="CENTER">-->
-<!--                                    <Label alignment="CENTER" prefHeight="17.0" prefWidth="64.0" text="Filter by ">-->
-<!--                                        <HBox.margin>-->
-<!--                                            <Insets left="20.0" right="5.0"/>-->
-<!--                                        </HBox.margin>-->
-<!--                                    </Label>-->
-<!--                                    <ChoiceBox prefWidth="150.0" fx:id="filterAppointmentsByChoiceBox" onAction="#handleAppointmentFilterChoice"/>-->
-<!--                                    <TextField fx:id="searchAppointmentsTextField" visible="false" promptText="Search Appointments">-->
-<!--                                        <HBox.margin>-->
-<!--                                            <Insets left="10.0" right="10.0" />-->
-<!--                                        </HBox.margin>-->
-<!--                                    </TextField>-->
-<!--                                </HBox>-->
 
                             </top>
                         </BorderPane>
@@ -274,39 +259,151 @@
                 </Tab>
 
                 <Tab text="Reports">
-                    <VBox>
-                        <ComboBox prefWidth="150.0" fx:id="reportsByMonthComboBox"
-                                  onAction="#numberOfAppointmentsReport">
-                            <VBox.margin>
-                                <Insets bottom="10.0" left="10.0" top="10.0"/>
-                            </VBox.margin>
-                        </ComboBox>
-                        <HBox>
-                            <VBox layoutX="10.0" layoutY="10.0">
-                                <PieChart title="Appointment Types" fx:id="appointmentTypesPieChart"
-                                          labelsVisible="false">
-                                    <VBox.margin>
-                                        <Insets left="10.0" right="10.0"/>
-                                    </VBox.margin>
-                                </PieChart>
-                            </VBox>
-                            <VBox>
-                                <Label text="Fully Booked Dates">
-                                    <font>
-                                        <Font size="18.0"/>
-                                    </font>
-                                    <VBox.margin>
-                                        <Insets bottom="10.0" left="15.0" top="5.0"/>
-                                    </VBox.margin>
+                    <ScrollPane>
+                        <VBox>
+
+                            <ComboBox prefWidth="150.0" fx:id="reportsByMonthComboBox"
+                                      onAction="#numberOfAppointmentsReport">
+                                <VBox.margin>
+                                    <Insets bottom="10.0" left="10.0" top="10.0"/>
+                                </VBox.margin>
+                            </ComboBox>
+                            <HBox>
+                                <VBox layoutX="10.0" layoutY="10.0">
+                                    <PieChart title="Appointment Types" fx:id="appointmentTypesPieChart"
+                                              labelsVisible="false">
+                                        <VBox.margin>
+                                            <Insets left="10.0" right="10.0"/>
+                                        </VBox.margin>
+                                    </PieChart>
+                                </VBox>
+                                <VBox>
+                                    <Label text="Fully Booked Dates">
+                                        <font>
+                                            <Font size="18.0"/>
+                                        </font>
+                                        <VBox.margin>
+                                            <Insets bottom="10.0" left="15.0" top="5.0"/>
+                                        </VBox.margin>
+                                    </Label>
+                                    <ListView disable="true" fx:id="fullyBookedDatesListView">
+                                        <VBox.margin>
+                                            <Insets left="10.0" right="10.0"/>
+                                        </VBox.margin>
+                                    </ListView>
+                                </VBox>
+                            </HBox>
+
+                            <Label alignment="CENTER" contentDisplay="CENTER" fx:id="reportsTableFilterLabel" text="Contact Schedule">
+                                <font>
+                                    <Font name="SansSerif Regular" size="18.0"/>
+                                </font>
+                                <VBox.margin>
+                                    <Insets left="20" bottom="10.0" top="30.0"/>
+                                </VBox.margin>
+                            </Label>
+
+                            <Separator opacity="0.35" prefHeight="0.0" prefWidth="600.0">
+                                <VBox.margin>
+                                    <Insets bottom="10.0" top="5.0"/>
+                                </VBox.margin>
+                            </Separator>
+
+                            <HBox alignment="CENTER_LEFT" prefHeight="71.0" prefWidth="441.0">
+                                <Label alignment="CENTER" prefHeight="17.0" prefWidth="64.0" text="Contact ID">
+                                    <HBox.margin>
+                                        <Insets left="15.0" right="5.0"/>
+                                    </HBox.margin>
                                 </Label>
-                                <ListView disable="true" fx:id="fullyBookedDatesListView">
-                                    <VBox.margin>
-                                        <Insets left="10.0" right="10.0"/>
-                                    </VBox.margin>
-                                </ListView>
-                            </VBox>
-                        </HBox>
-                    </VBox>
+
+                                <ChoiceBox prefWidth="50.0" fx:id="filterAppointmentsByContactsChoiceBox" onAction="#loadContactScheduleTableReport"/>
+
+                            </HBox>
+
+                            <TableView prefHeight="490.0" prefWidth="855.0" BorderPane.alignment="CENTER" fx:id="contactScheduleTable">
+                                <columns>
+                                    <TableColumn text="Appointment ID">
+                                        <cellValueFactory>
+                                            <PropertyValueFactory property="appointmentID"/>
+                                        </cellValueFactory>
+                                    </TableColumn>
+
+                                    <TableColumn minWidth="0.0" prefWidth="100" text="Start Time">
+                                        <cellValueFactory>
+                                            <PropertyValueFactory property="startTime"/>
+                                        </cellValueFactory>
+                                    </TableColumn>
+
+                                    <TableColumn minWidth="0.0" prefWidth="100.0" text="End Time">
+                                        <cellValueFactory>
+                                            <PropertyValueFactory property="endTime"/>
+                                        </cellValueFactory>
+                                    </TableColumn>
+
+<!--                                    <TableColumn minWidth="0.0" prefWidth="120.0" text="Date">-->
+<!--                                        <cellValueFactory>-->
+<!--                                            <PropertyValueFactory property="startDate"/>-->
+<!--                                        </cellValueFactory>-->
+<!--                                    </TableColumn>-->
+
+                                    <TableColumn minWidth="0.0" prefWidth="120.0" text="Start Date">
+                                        <cellValueFactory>
+                                            <PropertyValueFactory property="startDate"/>
+                                        </cellValueFactory>
+                                    </TableColumn>
+
+                                    <TableColumn minWidth="0.0" prefWidth="120.0" text="End Date">
+                                        <cellValueFactory>
+                                            <PropertyValueFactory property="endDate"/>
+                                        </cellValueFactory>
+                                    </TableColumn>
+
+                                    <TableColumn minWidth="0.0" prefWidth="120" text="Type">
+                                        <cellValueFactory>
+                                            <PropertyValueFactory property="type"/>
+                                        </cellValueFactory>
+                                    </TableColumn>
+
+                                    <TableColumn minWidth="0.0" prefWidth="120.0" text="Title">
+                                        <cellValueFactory>
+                                            <PropertyValueFactory property="title"/>
+                                        </cellValueFactory>
+                                    </TableColumn>
+
+                                    <TableColumn minWidth="0.0" prefWidth="180.0" text="Description">
+                                        <cellValueFactory>
+                                            <PropertyValueFactory property="description"/>
+                                        </cellValueFactory>
+                                    </TableColumn>
+
+                                    <TableColumn minWidth="0.0" prefWidth="180.0" text="Location">
+                                        <cellValueFactory>
+                                            <PropertyValueFactory property="location"/>
+                                        </cellValueFactory>
+                                    </TableColumn>
+
+                                    <TableColumn minWidth="0.0" prefWidth="150.0" text="Contact">
+                                        <cellValueFactory>
+                                            <PropertyValueFactory property="contactName"/>
+                                        </cellValueFactory>
+                                    </TableColumn>
+
+                                    <TableColumn minWidth="0.0" prefWidth="85" text="Customer ID">
+                                        <cellValueFactory>
+                                            <PropertyValueFactory property="customerID"/>
+                                        </cellValueFactory>
+                                    </TableColumn>
+
+                                    <TableColumn minWidth="0.0" prefWidth="85" text="User ID">
+                                        <cellValueFactory>
+                                            <PropertyValueFactory property="userID"/>
+                                        </cellValueFactory>
+                                    </TableColumn>
+
+                                </columns>
+                            </TableView>
+                        </VBox>
+                    </ScrollPane>
                 </Tab>
             </TabPane>
         </center>

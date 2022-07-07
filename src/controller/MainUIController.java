@@ -1,9 +1,6 @@
 package controller;
 
-import databaseQueries.AppointmentsQuery;
-import databaseQueries.CountriesQuery;
-import databaseQueries.CustomersQuery;
-import databaseQueries.DivisionsQuery;
+import databaseQueries.*;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
@@ -16,10 +13,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import model.Appointment;
-import model.Country;
-import model.Customer;
-import model.Division;
+import model.*;
+
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -50,6 +45,9 @@ public class MainUIController implements Initializable {
     @FXML public PieChart appointmentTypesPieChart;
     @FXML public ListView<String> fullyBookedDatesListView;
     @FXML public ComboBox<String> reportsByMonthComboBox;
+    @FXML public TableView<Appointment> contactScheduleTable;
+    @FXML public ChoiceBox<String> filterAppointmentsByContactsChoiceBox;
+    @FXML public Label reportsTableFilterLabel;
     @FXML private AnchorPane mainPanel;
     @FXML private Button addAppointmentButton;
     @FXML private Button updateAppointmentButton;
@@ -106,6 +104,7 @@ public class MainUIController implements Initializable {
         appointmentWithinFifteenMinutes(AppointmentsQuery.checkIfAppointmentWithinFifteenMinutes(LocalDateTime.now(), LocalDateTime.now().plusMinutes(15)));
         loadMonthsInComboBox();
         loadFullyBookedDatesReport();
+        loadContactsScheduleChoiceBox();
     }
 
     /**
@@ -920,5 +919,30 @@ public class MainUIController implements Initializable {
                 fullyBookedDatesListView.getItems().add(date);
             }
         }
+    }
+
+    /**
+     * loads choice-box with contact ID's in reports tab
+     */
+    public void loadContactsScheduleChoiceBox() {
+        ObservableList<Contact> contacts = ContactsQuery.getAllContacts();
+        assert contacts != null;
+
+        for(Contact c : contacts) {
+            filterAppointmentsByContactsChoiceBox.getItems().add(String.valueOf(c.getContactID()));
+        }
+
+        filterAppointmentsByContactsChoiceBox.getSelectionModel().selectFirst();
+    }
+
+
+    /**
+     * loads contact schedule table based on choice-box selection
+     */
+    public void loadContactScheduleTableReport() {
+        contactScheduleTable.getItems().clear();
+        String contactID = filterAppointmentsByContactsChoiceBox.getSelectionModel().getSelectedItem();
+        ObservableList<Appointment> contactSchedule = AppointmentsQuery.getAllAppointmentsByContact(LocalDateTime.now(), contactID);
+        contactScheduleTable.setItems(contactSchedule);
     }
 }

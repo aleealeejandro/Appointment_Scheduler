@@ -101,6 +101,51 @@ public class AppointmentsQuery {
         }
     }
 
+    public static ObservableList<Appointment> getAllAppointmentsByContact(LocalDateTime timeNow, String contactIdString) {
+        String timeNowString = TimeController.getUtcDatetime(timeNow).format(TimeController.timestampFormatter);
+        int contactId = Integer.parseInt(contactIdString);
+        ObservableList<Appointment> appointments = FXCollections.observableArrayList();
+        String query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' AND a.Contact_ID='%s' ORDER BY Start;", timeNowString, contactId);
+//                    String query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE a.Contact_ID='%s' ORDER BY Start;", contactId);
+        try {
+            PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(query);
+            ResultSet appointmentsSet = preparedStatement.executeQuery();
+
+            while(appointmentsSet.next()) {
+                String appointmentID = appointmentsSet.getString("Appointment_ID");
+                String title = appointmentsSet.getString("Title");
+                String description = appointmentsSet.getString("Description");
+                String location = appointmentsSet.getString("Location");
+                String type = appointmentsSet.getString("Type");
+                assert false;
+
+                LocalDateTime  startTimeObject = appointmentsSet.getTimestamp("Start").toLocalDateTime();
+//                change from UTC to SYSTEM LocalDateTime
+                startTimeObject = TimeController.getSystemDatetime(startTimeObject);
+                String startTime = startTimeObject.format(TimeController.timeFormatter);
+                LocalDate startDate = startTimeObject.toLocalDate();
+
+                LocalDateTime endTimeObject = appointmentsSet.getTimestamp("End").toLocalDateTime();
+//                change from UTC to SYSTEM LocalDateTime
+                endTimeObject = TimeController.getSystemDatetime(endTimeObject);
+                String endTime = endTimeObject.format(TimeController.timeFormatter);
+                LocalDate endDate = endTimeObject.toLocalDate();
+
+                String customerID = appointmentsSet.getString("Customer_ID");
+                String userID = appointmentsSet.getString("User_ID");
+                String contactID = appointmentsSet.getString("a.Contact_ID");
+                String contactName = appointmentsSet.getString("c.Contact_Name");
+                Appointment appointment = new Appointment(appointmentID, title, description, location, type, startDate, startTime, endDate, endTime, customerID, userID, contactID, contactName);
+                appointments.add(appointment);
+            }
+
+            return appointments;
+        } catch (SQLException err) {
+            err.printStackTrace();
+            return null;
+        }
+    }
+
     /**
      * deletes appointment in database
      *
