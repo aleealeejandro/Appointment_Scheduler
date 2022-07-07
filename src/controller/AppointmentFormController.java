@@ -2,6 +2,7 @@ package controller;
 
 import databaseQueries.*;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -34,7 +35,9 @@ public class AppointmentFormController implements Initializable {
     @FXML public DatePicker datePickerField;
     @FXML public ComboBox<String> timeDurationComboBox;
     @FXML public ComboBox<String> userIDComboBox;
-//    @FXML public ComboBox<User> userIDComboBox;
+    @FXML public Label endTimeLabel;
+    @FXML public Label endDateLabel;
+    //    @FXML public ComboBox<User> userIDComboBox;
     @FXML private ComboBox<String> contactsComboBox;
     @FXML private ComboBox<String> customersComboBox;
     @FXML private ComboBox<String> startTimesComboBox;
@@ -164,7 +167,7 @@ public class AppointmentFormController implements Initializable {
         contactsComboBox.getSelectionModel().select(appointment.getContactID());
         customersComboBox.getSelectionModel().select(appointment.getCustomerID());
         userIDComboBox.getSelectionModel().select(appointment.getUserID());
-
+        updateEndTimeLabel();
     }
 
     /**
@@ -329,6 +332,7 @@ public class AppointmentFormController implements Initializable {
         datePickerField.valueProperty().addListener((ov, oldValue, newValue) -> {
             datePickerField.setValue(newValue);
             dateChosen = datePickerField.getValue();
+            endDateLabel.setText(dateChosen.format(TimeController.dateFormatter));
             loadTimeDurationComboBox();
             loadStartTimesComboBox();
 
@@ -533,6 +537,7 @@ public class AppointmentFormController implements Initializable {
         }
 
         startTimesComboBox.getSelectionModel().selectFirst();
+        updateEndTimeLabel();
     }
 
 
@@ -662,6 +667,19 @@ public class AppointmentFormController implements Initializable {
     void closeWindow() {
         Stage stage = (Stage) cancelButton.getScene().getWindow();
         stage.close();
+    }
+
+    /**
+     * updates end time label when start time is selected
+     */
+    public void updateEndTimeLabel() {
+        int durationOfAppointment = Integer.parseInt(timeDurationComboBox.getValue().replaceAll("[\\D]", "")) - 1;
+
+        if(startTimesComboBox.getSelectionModel().getSelectedItem() != null) {
+            LocalTime startTime =  LocalTime.parse(startTimesComboBox.getSelectionModel().getSelectedItem(), TimeController.timeFormatter);
+            LocalTime endTime = startTime.plusMinutes(durationOfAppointment);
+            endTimeLabel.setText(endTime.format(TimeController.timeFormatter));
+        }
     }
 
 }
