@@ -61,23 +61,23 @@
                                                 </cellValueFactory>
                                             </TableColumn>
 
-                                            <TableColumn minWidth="0.0" prefWidth="120.0" text="Date">
-                                                <cellValueFactory>
-                                                    <PropertyValueFactory property="startDate"/>
-                                                </cellValueFactory>
-                                            </TableColumn>
-
-<!--                                            <TableColumn minWidth="0.0" prefWidth="120.0" text="Start Date">-->
+<!--                                            <TableColumn minWidth="0.0" prefWidth="120.0" text="Date">-->
 <!--                                                <cellValueFactory>-->
 <!--                                                    <PropertyValueFactory property="startDate"/>-->
 <!--                                                </cellValueFactory>-->
 <!--                                            </TableColumn>-->
 
-<!--                                            <TableColumn minWidth="0.0" prefWidth="120.0" text="End Date">-->
-<!--                                                <cellValueFactory>-->
-<!--                                                    <PropertyValueFactory property="endDate"/>-->
-<!--                                                </cellValueFactory>-->
-<!--                                            </TableColumn>-->
+                                            <TableColumn minWidth="0.0" prefWidth="120.0" text="Start Date">
+                                                <cellValueFactory>
+                                                    <PropertyValueFactory property="startDate"/>
+                                                </cellValueFactory>
+                                            </TableColumn>
+
+                                            <TableColumn minWidth="0.0" prefWidth="120.0" text="End Date">
+                                                <cellValueFactory>
+                                                    <PropertyValueFactory property="endDate"/>
+                                                </cellValueFactory>
+                                            </TableColumn>
 
                                             <TableColumn minWidth="0.0" prefWidth="120" text="Type">
                                                 <cellValueFactory>

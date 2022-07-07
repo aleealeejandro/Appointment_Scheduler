@@ -137,6 +137,12 @@ public class MainUIController implements Initializable {
             alert.setHeaderText("Upcoming Appointment");
             alert.setContentText("Howdy, there is an appointment within fifteen minutes.");
             alert.showAndWait();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Notice");
+            alert.setHeaderText("No Upcoming Appointments");
+            alert.setContentText("Howdy, there are no appointments within fifteen minutes.");
+            alert.showAndWait();
         }
     }
 
