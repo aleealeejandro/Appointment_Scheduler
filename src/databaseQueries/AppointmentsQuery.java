@@ -6,13 +6,9 @@ import helper.JDBC;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.PieChart;
-import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
 import model.Appointment;
 import java.sql.*;
 import java.time.*;
-import java.util.HashMap;
 
 /**
  *
@@ -353,30 +349,43 @@ public class AppointmentsQuery {
      *
      * @param timeNow the time when checkIfAppointmentWithinFifteenMinutes() was called
      * @param fifteenMinutesFromNow fifteen minutes after timeNow parameter
-     * @return number of appointments within fifteen minutes
+     * @return appointment that is within 15 minutes
      */
-    public static int checkIfAppointmentWithinFifteenMinutes(LocalDateTime timeNow, LocalDateTime fifteenMinutesFromNow) {
+    public static Appointment checkIfAppointmentWithinFifteenMinutes(LocalDateTime timeNow, LocalDateTime fifteenMinutesFromNow) {
         timeNow = TimeController.getUtcDatetime(timeNow);
         fifteenMinutesFromNow = TimeController.getUtcDatetime(fifteenMinutesFromNow);
         String timeNowString = timeNow.format(TimeController.timestampFormatter);
         String fifteenMinutesFromNowString = fifteenMinutesFromNow.format(TimeController.timestampFormatter);
-        String query = "SELECT COUNT(Appointment_ID) FROM client_schedule.appointments WHERE Start BETWEEN ? AND ?;";
+        String query = "SELECT Appointment_ID, Start, End, User_ID FROM client_schedule.appointments WHERE Start BETWEEN ? AND ?;";
 
         try {
             PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(query);
             preparedStatement.setString(1, timeNowString);
             preparedStatement.setString(2, fifteenMinutesFromNowString);
             ResultSet resultSet = preparedStatement.executeQuery();
-            int count = 0;
 
             while(resultSet.next()) {
-                count = resultSet.getInt(1);
+                String appointmentID = resultSet.getString("Appointment_ID");
+                LocalDateTime  startTimeObject = resultSet.getTimestamp("Start").toLocalDateTime();
+//                change from UTC to SYSTEM LocalDateTime
+                startTimeObject = TimeController.getSystemDatetime(startTimeObject);
+                String startTime = startTimeObject.format(TimeController.timeFormatter);
+                LocalDate startDate = startTimeObject.toLocalDate();
+
+                LocalDateTime endTimeObject = resultSet.getTimestamp("End").toLocalDateTime();
+//                change from UTC to SYSTEM LocalDateTime
+                endTimeObject = TimeController.getSystemDatetime(endTimeObject);
+                String endTime = endTimeObject.format(TimeController.timeFormatter);
+                LocalDate endDate = endTimeObject.toLocalDate();
+
+                String userID = resultSet.getString("User_ID");
+                return new Appointment(appointmentID, startDate, startTime, endDate, endTime, userID);
             }
 
-            return count;
+            return null;
         } catch(SQLException e) {
             e.printStackTrace();
-            return -1;
+            return null;
         }
     }
 

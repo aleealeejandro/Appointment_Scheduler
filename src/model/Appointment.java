@@ -50,6 +50,15 @@ public class Appointment {
         this.contactID = contactID;
     }
 
+    public Appointment(String appointmentID, LocalDate startDate, String startTime, LocalDate endDate, String endTime, String userID) {
+        this.appointmentID = appointmentID;
+        this.startDate = startDate;
+        this.startTime = startTime;
+        this.endDate = endDate;
+        this.endTime = endTime;
+        this.userID = userID;
+    }
+
     public Appointment(LocalDateTime start, LocalDateTime end) {
         this.start = start;
         this.end = end;

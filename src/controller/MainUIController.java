@@ -102,7 +102,7 @@ public class MainUIController implements Initializable {
         disableEnableUpdateAndDeleteAppointmentButtons();
         disableEnableUpdateAndDeleteCustomerButtons();
         disableUpdateAndDeleteCustomerButtons();
-        appointmentWithinFifteenMinutes(AppointmentsQuery.checkIfAppointmentWithinFifteenMinutes(LocalDateTime.now(), LocalDateTime.now().plusMinutes(15)));
+        appointmentWithinFifteenMinutes();
         loadMonthsInComboBox();
         loadFullyBookedDatesReport();
         loadContactsScheduleChoiceBox();
@@ -127,24 +127,21 @@ public class MainUIController implements Initializable {
     }
 
     /**
-     * shows alert box if number of appointments within fifteen minutes is more than 0
-     *
-     * @param numberOfAppointmentsInFifteenMinutes number of appointments within fifteen minutes
+     * shows alert box if appointment is within fifteen minutes
      */
-    public static void appointmentWithinFifteenMinutes(int numberOfAppointmentsInFifteenMinutes) {
-        if(numberOfAppointmentsInFifteenMinutes > 0) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Notice");
+    public static void appointmentWithinFifteenMinutes() {
+        Appointment appointment = AppointmentsQuery.checkIfAppointmentWithinFifteenMinutes(LocalDateTime.now(), LocalDateTime.now().plusMinutes(15));
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Notice");
+        if(appointment != null) {
             alert.setHeaderText("Upcoming Appointment");
-            alert.setContentText("Howdy, there is an appointment within fifteen minutes.");
-            alert.showAndWait();
+            alert.setContentText(String.format("Howdy, there is an appointment within fifteen minutes.\nAppointment ID: %s\n%s-%s %s\nUser ID: %s", appointment.getAppointmentID(), appointment.getStartTime(), appointment.getEndTime(), appointment.getStartDate().format(TimeController.dateFormatter), appointment.getUserID()));
         } else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Notice");
             alert.setHeaderText("No Upcoming Appointments");
             alert.setContentText("Howdy, there are no appointments within fifteen minutes.");
-            alert.showAndWait();
         }
+        alert.showAndWait();
     }
 
     /**
