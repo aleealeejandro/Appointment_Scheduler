@@ -224,10 +224,8 @@ public class MainUIController implements Initializable {
             LocalDateTime appointmentEndDateTime = LocalDateTime.of(appointment.getEndDate(), LocalTime.parse(appointment.getEndTime(), TimeController.timeFormatter));
 
             if(appointmentStartDateTime.isBefore(timeRightNow) && appointmentEndDateTime.isAfter(timeRightNow)) {
-                System.out.println("Appointment in progress");
                 disableUpdateAndDeleteAppointmentButtons();
             } else if(appointmentEndDateTime.isBefore(timeRightNow)) {
-                System.out.println("Appointment already passed");
                 updateAppointmentButton.setDisable(true);
                 deleteAppointmentButton.setDisable(false);
             }
@@ -1041,6 +1039,10 @@ public class MainUIController implements Initializable {
             totalAppointmentsLabel.setText(String.format("Total Appointments: %s", contactSchedule.size()));
         } else {
             totalAppointmentsLabel.setText("There are no appointments for this contact.");
+        }
+
+        if(contactScheduleTable.getItems() != null) {
+            customiseFactory();
         }
     }
 

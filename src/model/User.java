@@ -20,7 +20,6 @@ public class User {
         this.userName = userName;
     }
 
-
     /**
      * @return user's ID number
      */

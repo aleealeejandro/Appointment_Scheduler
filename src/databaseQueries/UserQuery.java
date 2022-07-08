@@ -1,11 +1,9 @@
 package databaseQueries;
 
-//import databaseUtils.DatabaseConnection;
 import helper.JDBC;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import model.User;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -54,7 +52,7 @@ public class UserQuery {
      */
     public static int checkUser(String username, String password) throws SQLException {
         try {
-            String query = "SELECT User_ID, User_Name, Password FROM client_schedule.users WHERE User_Name=\"" + username + "\" AND Password=\"" + password + "\"";
+            String query = "SELECT User_ID FROM client_schedule.users WHERE User_Name=\"" + username + "\" AND Password=\"" + password + "\"";
             PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(query);
             ResultSet resultSet = preparedStatement.executeQuery();
             if(resultSet.next()) {
