@@ -30,13 +30,47 @@
     </li>
   </ul>
 </div>
-  
+
+<h2>Notes<h2/>
+
+<h4>Tab Notes:</h4>
+<p>
+    When a user switches to another tab all the database queries are run for that specific tab so that it can populate with fresh data. 
+</p>
+
+<h4>Appointment Tables Notes:</h4>
+<p>
+    The appointment table in the appointments tab and reports tab are both color coded. Red means the appointment already passed, yellow means the appointment is going on at the moment and green means that it's an upcoming appointment. If the appointment selected has already passed the end time then the user will only be able to update it. If the appointment selected is in progress, the user will not be able to update or delete the appointment until after it is finished. If the appointment selected is an upcoming appointment the user will be able to update or delete the appointment.
+</p>
+
+<h4>Date-picker in Appointments Tab Notes:</h4>
+<p>
+    If the user selects a filter for the appointments' table that is not 'All' or 'Today' a date-picker with the date pre-selected to the next day available that is not that exact same day. The user can select any date in the date-picker that is within the time-frame of our timezone up to one year in the future. If the 'Month' or 'Week' filter is chosen and the user selects a date, the application automatically finds the first day of the month or the first day of the work week of the selected date and the last day of the month or the last day of the work week based on the filter.
+</p>
+
+<h4>A3d Notes:</h4>
+<p>
+    The process of checking if times overlap or exist is automated so that alerts are not necessary. The start time combo-box loads with available start times according to the time duration. I have added a business rule that a user cannot schedule an appointment less than one hour before the start time, so that the contact has time to prepare for their next appointment. 
+    If there is a day that is fully booked, that date will not be able to selected. Only dates today and after are enabled in the date-picker so that a user cannot make an appointment in the past.
+</p>
+
+<h4>Pie Graph Notes:</h4>
+<p>
+    The pie graph in the reports tab shows slices with the appointments by type. When hovering over a slice a tooltip appears showing the amount of that type and the name.
+</p>
+
+<h4>C Notes:</h4>
+<p>
+    Logout's are also being logged.
+</p>
+
+
 <h2>Directions<h2/> 
 <p>
   Upon opening the application the user is prompted with a login screen. Once the user is successfully logged in the main GUI is shown.
   The main GUI consists of three different tabs. The first tab is the Appointments tab. This tab shows the user a table of appointments. This table can be filtered and queried. The user can add an appointment at any given time. If the user wishes to update or delete an appointment they must first select a record from the table.
   If a user selects the add button in the appointment tab a window with a form will pop up but if a user clicks the update button the same form will appear except this time the form will be filled out with information. The customers tab works the exact same way as the appointments tab except that if the user deletes a customer the appointments for that customer will be deleted.
-  The reports tab shows two reports. If the user wants to see the amount of different appointment types by month, then they can filter the month in a choice-box.
+  The reports tab shows three reports. If the user wants to see the amount of different appointment types by month, then they can filter the month in a choice-box within the reports tab.
   If the user wants to log out they can do so at any time by either pressing the logout button or exiting the main GUI.
 </p>
 

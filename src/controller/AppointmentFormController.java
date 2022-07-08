@@ -68,11 +68,9 @@ public class AppointmentFormController implements Initializable {
         datePickerListener();
 
         try {
-//            loadTimeDurationComboBox();
-//            loadStartTimesComboBox();
-            loadContactChoiceBox();
-            loadCustomerChoiceBox();
-            loadUserChoiceBox();
+            loadContactComboBox();
+            loadCustomerComboBox();
+            loadUserComboBox();
 
             if(typeOfForm.equals("addAppointmentForm")) {
                 loadAddAppointmentForm();
@@ -327,6 +325,7 @@ public class AppointmentFormController implements Initializable {
 
     /**
      * creates a listener for the date-picker
+     * the lambda function used in this method makes our code cleaner and less bulky
      */
     public void datePickerListener() {
         datePickerField.valueProperty().addListener((ov, oldValue, newValue) -> {
@@ -558,7 +557,7 @@ public class AppointmentFormController implements Initializable {
      *
      * @throws SQLException if an SQL exception occurs
      */
-    public void loadContactChoiceBox() throws SQLException {
+    public void loadContactComboBox() throws SQLException {
         ObservableList<Contact> contacts = ContactsQuery.getAllContacts();
         assert contacts != null;
 
@@ -572,7 +571,7 @@ public class AppointmentFormController implements Initializable {
      *
      * @throws SQLException if an SQL exception occurs
      */
-    public void loadCustomerChoiceBox() throws SQLException {
+    public void loadCustomerComboBox() throws SQLException {
         ObservableList<Customer> customers = CustomersQuery.getAllCustomers();
         assert customers != null;
 
@@ -587,7 +586,7 @@ public class AppointmentFormController implements Initializable {
      *
      * @throws SQLException if an SQL exception occurs
      */
-    public void loadUserChoiceBox() throws SQLException {
+    public void loadUserComboBox() throws SQLException {
         ObservableList<User> userIDs = UserQuery.getAllUsers();
         assert userIDs != null;
 

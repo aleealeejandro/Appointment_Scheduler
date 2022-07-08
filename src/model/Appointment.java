@@ -50,6 +50,17 @@ public class Appointment {
         this.contactID = contactID;
     }
 
+    public Appointment(String appointmentID, String description, String type, LocalDate startDate, String startTime, LocalDate endDate, String endTime, String customerID) {
+        this.appointmentID = appointmentID;
+        this.description = description;
+        this.type = type;
+        this.startDate = startDate;
+        this.startTime = startTime;
+        this.endDate = endDate;
+        this.endTime = endTime;
+        this.customerID = customerID;
+    }
+
     public Appointment(String appointmentID, LocalDate startDate, String startTime, LocalDate endDate, String endTime, String userID) {
         this.appointmentID = appointmentID;
         this.startDate = startDate;

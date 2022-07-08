@@ -16,7 +16,7 @@
     <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="605.0" prefWidth="857.0">
         <center>
             <TabPane prefHeight="600.0" prefWidth="750.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER" fx:id="tabPane">
-                <Tab text="Appointments">
+                <Tab text="Appointments" fx:id="appointmentsTab">
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="525.0" prefWidth="857.0">
                         <BorderPane layoutY="-1.0" prefHeight="525.0" prefWidth="855.0">
                             <bottom>
@@ -24,7 +24,6 @@
                                     <Button mnemonicParsing="false" text="Add" onAction="#handleAppointmentButtonClicked" fx:id="addAppointmentButton"/>
                                     <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Update" onAction="#handleAppointmentButtonClicked" fx:id="updateAppointmentButton"/>
                                     <Button layoutX="68.0" layoutY="10.0" mnemonicParsing="false" text="Delete" onAction="#handleAppointmentButtonClicked" fx:id="deleteAppointmentButton"/>
-<!--                                    <Button  mnemonicParsing="false" fx:id="refreshAppointmentTableButton" text="Refresh" onAction="#loadFilteredAppointmentsTable"/>-->
                                 </ToolBar>
                             </bottom>
                             <center>
@@ -43,7 +42,7 @@
                                     <TableView prefHeight="490.0" prefWidth="855.0" BorderPane.alignment="CENTER" fx:id="appointmentsTable" onMouseClicked="#appointmentTableViewRowChosen">
                                         <columns>
 <!--                                            <TableColumn prefWidth="110.0" text="Appointment ID">-->
-                                            <TableColumn text="Appointment ID">
+                                            <TableColumn text="Appointment ID" fx:id="appointmentIDColumn">
                                                 <cellValueFactory>
                                                     <PropertyValueFactory property="appointmentID"/>
                                                 </cellValueFactory>
@@ -156,7 +155,7 @@
                         </BorderPane>
                     </AnchorPane>
                 </Tab>
-                <Tab text="Customers">
+                <Tab text="Customers" fx:id="customersTab">
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="525.0" prefWidth="857.0">
                         <BorderPane layoutY="-1.0" prefHeight="525.0" prefWidth="855.0">
                             <top>
@@ -207,9 +206,7 @@
                                     <Button mnemonicParsing="false" fx:id="addCustomerButton" text="Add"  onAction="#handleCustomerButtonClicked"/>
                                     <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" fx:id="updateCustomerButton" text="Update" onAction="#handleCustomerButtonClicked"/>
                                     <Button layoutX="68.0" layoutY="10.0" mnemonicParsing="false" fx:id="deleteCustomerButton" text="Delete" onAction="#handleCustomerButtonClicked"/>
-<!--                                    <Button layoutX="227.0" layoutY="10.0" mnemonicParsing="false" fx:id="customerReportsButton" text="Reports" onAction="#handleCustomerButtonClicked"/>-->
-<!--                                    <Button  mnemonicParsing="false" fx:id="refreshCustomerTableButton" text="Refresh" onAction="#loadCustomersTable"/>-->
-                                    <Button  mnemonicParsing="false" fx:id="refreshCustomerTableButton" text="Refresh" onAction="#loadFilteredCustomersTable"/>
+<!--                                    <Button  mnemonicParsing="false" fx:id="refreshCustomerTableButton" text="Refresh" onAction="#loadFilteredCustomersTable"/>-->
                                 </ToolBar>
                             </bottom>
                             <center>
@@ -258,7 +255,7 @@
                     </AnchorPane>
                 </Tab>
 
-                <Tab text="Reports">
+                <Tab text="Reports" fx:id="reportsTab">
                     <ScrollPane>
                         <VBox>
 
@@ -322,7 +319,7 @@
 
                             <TableView prefHeight="300.0" prefWidth="855.0" BorderPane.alignment="CENTER" fx:id="contactScheduleTable">
                                 <columns>
-                                    <TableColumn text="Appointment ID">
+                                    <TableColumn text="Appointment ID" fx:id="appointmentIDColumnReports">
                                         <cellValueFactory>
                                             <PropertyValueFactory property="appointmentID"/>
                                         </cellValueFactory>
@@ -364,39 +361,15 @@
                                         </cellValueFactory>
                                     </TableColumn>
 
-                                    <TableColumn minWidth="0.0" prefWidth="120.0" text="Title">
-                                        <cellValueFactory>
-                                            <PropertyValueFactory property="title"/>
-                                        </cellValueFactory>
-                                    </TableColumn>
-
                                     <TableColumn minWidth="0.0" prefWidth="180.0" text="Description">
                                         <cellValueFactory>
                                             <PropertyValueFactory property="description"/>
                                         </cellValueFactory>
                                     </TableColumn>
 
-                                    <TableColumn minWidth="0.0" prefWidth="180.0" text="Location">
-                                        <cellValueFactory>
-                                            <PropertyValueFactory property="location"/>
-                                        </cellValueFactory>
-                                    </TableColumn>
-
-                                    <TableColumn minWidth="0.0" prefWidth="150.0" text="Contact">
-                                        <cellValueFactory>
-                                            <PropertyValueFactory property="contactName"/>
-                                        </cellValueFactory>
-                                    </TableColumn>
-
                                     <TableColumn minWidth="0.0" prefWidth="85" text="Customer ID">
                                         <cellValueFactory>
                                             <PropertyValueFactory property="customerID"/>
-                                        </cellValueFactory>
-                                    </TableColumn>
-
-                                    <TableColumn minWidth="0.0" prefWidth="85" text="User ID">
-                                        <cellValueFactory>
-                                            <PropertyValueFactory property="userID"/>
                                         </cellValueFactory>
                                     </TableColumn>
 

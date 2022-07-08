@@ -20,7 +20,7 @@ public class AppointmentsQuery {
      * gets all appointments from database based on user selected filter and datetime chosen
      *
      * @param filterBy filter type for query chosen by the user
-     * @param timeNow datetime when getAllAppointments() was called
+     * @param timeNow datetime when this method was called
      * @param dateTimeChosen datetime that user chose
      * @return list of appointments
      * @throws SQLException if an SQL exception occurs
@@ -28,31 +28,31 @@ public class AppointmentsQuery {
     public static ObservableList<Appointment> getAllAppointments(String filterBy, LocalDateTime timeNow, LocalDateTime dateTimeChosen) throws SQLException {
         String timeNowString = TimeController.getUtcDatetime(timeNow).format(TimeController.timestampFormatter);
         ObservableList<Appointment> appointments = FXCollections.observableArrayList();
-        String query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' ORDER BY Start;", timeNowString);
-//        String query = "SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID ORDER BY Start;";
+//        String query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' ORDER BY Start;", timeNowString);
+        String query = "SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID ORDER BY Start;";
 
         if(filterBy != null) {
             switch (filterBy) {
                 case "All":
-                    query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' ORDER BY Start;", timeNowString);
-//                    query = "SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID ORDER BY Start;";
+//                    query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' ORDER BY Start;", timeNowString);
+                    query = "SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID ORDER BY Start;";
                     break;
                 case "Month":
-                    query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' AND Start BETWEEN '%s' AND '%s' ORDER BY Start;", timeNowString, TimeController.getUtcDatetime(TimeController.getFirstOfMonthDateTime(dateTimeChosen)) + "%", TimeController.getUtcDatetime(TimeController.getLastOfMonthDateTime(dateTimeChosen).minusMinutes(1)) + "%");
-//                    query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE Start BETWEEN '%s' AND '%s' ORDER BY Start;", TimeController.getUtcDatetime(TimeController.getFirstOfMonthDateTime(dateTimeChosen)) + "%", TimeController.getUtcDatetime(TimeController.getLastOfMonthDateTime(dateTimeChosen).minusMinutes(1)) + "%");
+//                    query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' AND Start BETWEEN '%s' AND '%s' ORDER BY Start;", timeNowString, TimeController.getUtcDatetime(TimeController.getFirstOfMonthDateTime(dateTimeChosen)) + "%", TimeController.getUtcDatetime(TimeController.getLastOfMonthDateTime(dateTimeChosen).minusMinutes(1)) + "%");
+                    query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE Start BETWEEN '%s' AND '%s' ORDER BY Start;", TimeController.getUtcDatetime(TimeController.getFirstOfMonthDateTime(dateTimeChosen)) + "%", TimeController.getUtcDatetime(TimeController.getLastOfMonthDateTime(dateTimeChosen).minusMinutes(1)) + "%");
                     break;
                 case "Week":
-                    query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' AND Start BETWEEN '%s' AND '%s' ORDER BY Start;", timeNowString, TimeController.getUtcDatetime(TimeController.getStartOfWeekDateTime(dateTimeChosen)) + "%", TimeController.getUtcDatetime(TimeController.getEndOfWeekDateTime(dateTimeChosen).minusMinutes(1)) + "%");
-//                    query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE Start BETWEEN '%s' AND '%s' ORDER BY Start;", TimeController.getUtcDatetime(TimeController.getStartOfWeekDateTime(dateTimeChosen)) + "%", TimeController.getUtcDatetime(TimeController.getEndOfWeekDateTime(dateTimeChosen).minusMinutes(1)) + "%");
+//                    query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' AND Start BETWEEN '%s' AND '%s' ORDER BY Start;", timeNowString, TimeController.getUtcDatetime(TimeController.getStartOfWeekDateTime(dateTimeChosen)) + "%", TimeController.getUtcDatetime(TimeController.getEndOfWeekDateTime(dateTimeChosen).minusMinutes(1)) + "%");
+                    query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE Start BETWEEN '%s' AND '%s' ORDER BY Start;", TimeController.getUtcDatetime(TimeController.getStartOfWeekDateTime(dateTimeChosen)) + "%", TimeController.getUtcDatetime(TimeController.getEndOfWeekDateTime(dateTimeChosen).minusMinutes(1)) + "%");
                     break;
                 case "Today":
                 case "Day":
-                    query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' AND Start BETWEEN '%s' AND '%s' ORDER BY Start;", timeNowString, TimeController.getUtcDatetime(TimeController.getOpenOrCloseTime(dateTimeChosen, true)), TimeController.getUtcDatetime(TimeController.getOpenOrCloseTime(dateTimeChosen, false).minusMinutes(1)));
-//                    query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE Start BETWEEN '%s' AND '%s' ORDER BY Start;", TimeController.getUtcDatetime(TimeController.getOpenOrCloseTime(dateTimeChosen, true)), TimeController.getUtcDatetime(TimeController.getOpenOrCloseTime(dateTimeChosen, false).minusMinutes(1)));
+//                    query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' AND Start BETWEEN '%s' AND '%s' ORDER BY Start;", timeNowString, TimeController.getUtcDatetime(TimeController.getOpenOrCloseTime(dateTimeChosen, true)), TimeController.getUtcDatetime(TimeController.getOpenOrCloseTime(dateTimeChosen, false).minusMinutes(1)));
+                    query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE Start BETWEEN '%s' AND '%s' ORDER BY Start;", TimeController.getUtcDatetime(TimeController.getOpenOrCloseTime(dateTimeChosen, true)), TimeController.getUtcDatetime(TimeController.getOpenOrCloseTime(dateTimeChosen, false).minusMinutes(1)));
                     break;
                 case "My Appointments":
-                    query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' AND User_ID='%s' ORDER BY Start;", timeNowString, MainUIController.loggedInUserID);
-//                    query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE User_ID='%s' ORDER BY Start;", MainUIController.loggedInUserID);
+//                    query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' AND User_ID='%s' ORDER BY Start;", timeNowString, MainUIController.loggedInUserID);
+                    query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE User_ID='%s' ORDER BY Start;", MainUIController.loggedInUserID);
                     break;
             }
         }
@@ -97,23 +97,27 @@ public class AppointmentsQuery {
         }
     }
 
+    /**
+     * gets all the appointments for the specific contact
+     *
+     * @param timeNow datetime when this method was called
+     * @param contactIdString the contact ID to query
+     * @return filtered list of appointments
+     */
     public static ObservableList<Appointment> getAllAppointmentsByContact(LocalDateTime timeNow, String contactIdString) {
         String timeNowString = TimeController.getUtcDatetime(timeNow).format(TimeController.timestampFormatter);
         int contactId = Integer.parseInt(contactIdString);
         ObservableList<Appointment> appointments = FXCollections.observableArrayList();
-        String query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' AND a.Contact_ID='%s' ORDER BY Start;", timeNowString, contactId);
-//                    String query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE a.Contact_ID='%s' ORDER BY Start;", contactId);
+//        String query = String.format("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, a.Contact_ID, c.Contact_Name FROM client_schedule.appointments AS a INNER JOIN client_schedule.contacts AS c ON a.Contact_ID = c.Contact_ID WHERE End >= '%s' AND a.Contact_ID='%s' ORDER BY Start;", timeNowString, contactId);
+                    String query = String.format("SELECT Appointment_ID, Description, Type, Start, End, Customer_ID FROM client_schedule.appointments WHERE Contact_ID='%s' ORDER BY Start;", contactId);
         try {
             PreparedStatement preparedStatement = JDBC.getConnection().prepareStatement(query);
             ResultSet appointmentsSet = preparedStatement.executeQuery();
 
             while(appointmentsSet.next()) {
                 String appointmentID = appointmentsSet.getString("Appointment_ID");
-                String title = appointmentsSet.getString("Title");
                 String description = appointmentsSet.getString("Description");
-                String location = appointmentsSet.getString("Location");
                 String type = appointmentsSet.getString("Type");
-                assert false;
 
                 LocalDateTime  startTimeObject = appointmentsSet.getTimestamp("Start").toLocalDateTime();
 //                change from UTC to SYSTEM LocalDateTime
@@ -128,10 +132,7 @@ public class AppointmentsQuery {
                 LocalDate endDate = endTimeObject.toLocalDate();
 
                 String customerID = appointmentsSet.getString("Customer_ID");
-                String userID = appointmentsSet.getString("User_ID");
-                String contactID = appointmentsSet.getString("a.Contact_ID");
-                String contactName = appointmentsSet.getString("c.Contact_Name");
-                Appointment appointment = new Appointment(appointmentID, title, description, location, type, startDate, startTime, endDate, endTime, customerID, userID, contactID, contactName);
+                Appointment appointment = new Appointment(appointmentID, description, type, startDate, startTime, endDate, endTime, customerID);
                 appointments.add(appointment);
             }
 

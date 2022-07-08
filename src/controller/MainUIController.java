@@ -14,7 +14,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import model.*;
-
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -49,6 +48,11 @@ public class MainUIController implements Initializable {
     @FXML public ChoiceBox<String> filterAppointmentsByContactsChoiceBox;
     @FXML public Label reportsTableFilterLabel;
     @FXML public Label totalAppointmentsLabel;
+    @FXML public Tab appointmentsTab;
+    @FXML public Tab customersTab;
+    @FXML public Tab reportsTab;
+    @FXML public TableColumn<Appointment, String> appointmentIDColumn;
+    @FXML public TableColumn<Appointment, String> appointmentIDColumnReports;
     @FXML private AnchorPane mainPanel;
     @FXML private Button addAppointmentButton;
     @FXML private Button updateAppointmentButton;
@@ -59,7 +63,6 @@ public class MainUIController implements Initializable {
     @FXML private ChoiceBox<String> filterAppointmentsByChoiceBox;
     @FXML public TableView<Appointment> appointmentsTable;
     @FXML public TableView<Customer> customersTable;
-    @FXML public Button refreshCustomerTableButton;
     private String appointmentFilterChoiceBoxChoice;
     private String searchAppointmentsByChoiceBoxChoice;
     public static int loggedInUserID;
@@ -78,6 +81,7 @@ public class MainUIController implements Initializable {
      */
     public void initialize(URL url, ResourceBundle rb) {
         fullyScheduledDates.clear();
+        tabListener();
 
         tabPane.setTabMinWidth(75);
         tabPane.setTabMinHeight(25);
@@ -91,6 +95,7 @@ public class MainUIController implements Initializable {
         loadAppointmentFilterChoices();
         loadAppointmentSearchFilterChoiceBoxChoices();
 
+
         try {
             loadCountryChoicesInChoiceBox();
         } catch (SQLException e) {
@@ -98,14 +103,30 @@ public class MainUIController implements Initializable {
         }
 
         loadCustomerChoiceBoxChoices();
-        loadFilteredCustomersTable();
-        disableEnableUpdateAndDeleteAppointmentButtons();
-        disableEnableUpdateAndDeleteCustomerButtons();
-        disableUpdateAndDeleteCustomerButtons();
         appointmentWithinFifteenMinutes();
         loadMonthsInComboBox();
-        loadFullyBookedDatesReport();
         loadContactsScheduleChoiceBox();
+    }
+
+    /**
+     * loads tab content on click
+     */
+    public void tabListener() {
+        tabPane.getSelectionModel().selectedItemProperty().addListener((observableValue, oldTab, newTab) -> {
+            switch(newTab.getText()) {
+                case "Appointments":
+                    loadFilteredAppointmentsTable();
+                    break;
+                case "Customers":
+                    loadFilteredCustomersTable();
+                    break;
+                case "Reports":
+                    loadFullyBookedDatesReport();
+                    loadContactScheduleTableReport();
+                    numberOfAppointmentsReport();
+                    break;
+            }
+        });
     }
 
     /**
@@ -148,7 +169,8 @@ public class MainUIController implements Initializable {
      * loads combo-box choices
      */
     private void loadAppointmentFilterChoices() {
-        filterAppointmentsByChoiceBox.getItems().addAll("All", "Month", "Week", "Day", "Today", "My Appointments");
+//        filterAppointmentsByChoiceBox.getItems().addAll("All", "Month", "Week", "Day", "Today", "My Appointments");
+        filterAppointmentsByChoiceBox.getItems().addAll("All", "Month", "Week", "Day", "Today");
         filterAppointmentsByChoiceBox.getSelectionModel().selectFirst();
         appointmentFilterChoiceBoxChoice = filterAppointmentsByChoiceBox.getSelectionModel().getSelectedItem();
     }
@@ -194,14 +216,13 @@ public class MainUIController implements Initializable {
     private void disableEnableUpdateAndDeleteAppointmentButtons() {
         Appointment appointment = appointmentsTable.getSelectionModel().getSelectedItem();
 
+
         if(appointment == null) {
             disableUpdateAndDeleteAppointmentButtons();
-        }
-        else {
-            enableUpdateAndDeleteAppointmentButtons();
-
+        } else {
             LocalDateTime appointmentStartDateTime = LocalDateTime.of(appointment.getStartDate(), LocalTime.parse(appointment.getStartTime(), TimeController.timeFormatter));
             LocalDateTime appointmentEndDateTime = LocalDateTime.of(appointment.getEndDate(), LocalTime.parse(appointment.getEndTime(), TimeController.timeFormatter));
+
             if(appointmentStartDateTime.isBefore(timeRightNow) && appointmentEndDateTime.isAfter(timeRightNow)) {
                 System.out.println("Appointment in progress");
                 disableUpdateAndDeleteAppointmentButtons();
@@ -215,6 +236,65 @@ public class MainUIController implements Initializable {
             }
         }
 
+    }
+
+    /**
+     * sets the color or the rows for the appointment tables
+     */
+    private void customiseFactory() {
+        Callback<TableColumn<Appointment, String>, TableCell<Appointment, String>> cellFactory =
+                new Callback<>() {
+                    @Override
+                    public TableCell<Appointment, String> call(final TableColumn<Appointment, String> param) {
+                            return new TableCell<>() {
+                                @Override
+                                public void updateItem(String item, boolean empty) {
+                                    super.updateItem(item, empty);
+
+                                    if(empty) {
+                                        setGraphic(null);
+                                        setText(null);
+                                    } else {
+                                        setText(item);
+                                        TableRow<Appointment> row = getTableRow();
+                                        String style;
+
+                                        if(row != null && row.getItem() != null) {
+                                            LocalDateTime appointmentStartDateTime = LocalDateTime.of(row.getItem().getStartDate(), LocalTime.parse(row.getItem().getStartTime(), TimeController.timeFormatter));
+                                            LocalDateTime appointmentEndDateTime = LocalDateTime.of(row.getItem().getEndDate(), LocalTime.parse(row.getItem().getEndTime(), TimeController.timeFormatter));
+                                            String appointmentStatus;
+
+                                            if (appointmentStartDateTime.isBefore(timeRightNow) && appointmentEndDateTime.isAfter(timeRightNow)) {
+                                                appointmentStatus = "in progress";
+                                            } else if (appointmentEndDateTime.isBefore(timeRightNow)) {
+                                                appointmentStatus = "past";
+                                            } else {
+                                                appointmentStatus = "upcoming";
+                                            }
+
+                                            switch (appointmentStatus) {
+                                                case "in progress":
+                                                    style = "-fx-background-color:#FFECB3;";
+                                                    break;
+                                                case "past":
+                                                    style = "-fx-background-color:#FFCCBC;";
+                                                    break;
+                                                case "upcoming":
+                                                default:
+                                                    style = "-fx-background-color:#DCEDC8;";
+                                                    break;
+                                            }
+
+                                            row.setStyle(style);
+                                        }
+                                    }
+                                }
+                            };
+                    }
+                };
+
+        appointmentIDColumn.setCellFactory(cellFactory);
+        appointmentIDColumnReports.setCellFactory(cellFactory);
     }
 
     /**
@@ -304,21 +384,18 @@ public class MainUIController implements Initializable {
             if(!dialog.isShowing()) {
                 loadFilteredAppointmentsTable();
                 searchAppointmentsTextField.clear();
-                numberOfAppointmentsReport();
-                loadFullyBookedDatesReport();
-                loadContactScheduleTableReport();
             }
 
         } else {
             String id = appointmentsTable.getSelectionModel().getSelectedItem().getAppointmentID();
-            String starttime = appointmentsTable.getSelectionModel().getSelectedItem().getStartTime();
-            String endtime = appointmentsTable.getSelectionModel().getSelectedItem().getEndTime();
-            String startdate = appointmentsTable.getSelectionModel().getSelectedItem().getStartDate().format(TimeController.dateFormatter);
+            String startTime = appointmentsTable.getSelectionModel().getSelectedItem().getStartTime();
+            String endTime = appointmentsTable.getSelectionModel().getSelectedItem().getEndTime();
+            String startDate = appointmentsTable.getSelectionModel().getSelectedItem().getStartDate().format(TimeController.dateFormatter);
 
             Alert deletionAlert = new Alert(Alert.AlertType.CONFIRMATION);
             deletionAlert.setTitle("Notice");
             deletionAlert.setHeaderText("Are you sure you want to delete the following?");
-            deletionAlert.setContentText(String.format("Appointment_ID: %s\nTime: %s - %s\nDate: %s", id, starttime, endtime, startdate));
+            deletionAlert.setContentText(String.format("Appointment_ID: %s\nTime: %s - %s\nDate: %s", id, startTime, endTime, startDate));
 
             Optional<ButtonType> result = deletionAlert.showAndWait();
 
@@ -328,10 +405,7 @@ public class MainUIController implements Initializable {
                 if(deletionConfirmation) {
                     loadFilteredAppointmentsTable();
                     searchAppointmentsTextField.clear();
-                    disableUpdateAndDeleteAppointmentButtons();
-                    numberOfAppointmentsReport();
-                    loadFullyBookedDatesReport();
-                    loadContactScheduleTableReport();
+//                    disableUpdateAndDeleteAppointmentButtons();
                 }
             }
 
@@ -398,9 +472,7 @@ public class MainUIController implements Initializable {
 
                 if(deletionConfirmation) {
                     loadFilteredCustomersTable();
-                    loadFilteredAppointmentsTable();
                     searchCustomersTextField.clear();
-                    disableUpdateAndDeleteCustomerButtons();
                 }
             }
 
@@ -415,7 +487,7 @@ public class MainUIController implements Initializable {
     public void handleAppointmentFilterChoice() {
         appointmentFilterChoiceBoxChoice = filterAppointmentsByChoiceBox.getSelectionModel().getSelectedItem();
 
-        if(appointmentFilterChoiceBoxChoice != null && (appointmentFilterChoiceBoxChoice.equals("All") || appointmentFilterChoiceBoxChoice.equals("Today") || appointmentFilterChoiceBoxChoice.equals("My Appointments"))) {
+        if(appointmentFilterChoiceBoxChoice != null && (appointmentFilterChoiceBoxChoice.equals("All") || appointmentFilterChoiceBoxChoice.equals("Today"))) {
             appointmentDatePickerField.setValue(null);
             dateChosen = appointmentDatePickerField.getValue();
             appointmentDatePickerField.setDisable(true);
@@ -449,14 +521,16 @@ public class MainUIController implements Initializable {
             case "Today":
                 tableFilterLabel.setText("Appointments Today");
                 break;
-            case "My Appointments":
-                tableFilterLabel.setText("My Appointments");
-                break;
         }
 
         loadFilteredAppointmentsTable();
     }
 
+    /**
+     * checks if input is empty or null so that if it is not it can call the searchFindAppointments method to search for the input
+     * the lambda function used in this method makes our code cleaner and less bulky
+     * @param searchText text to search for
+     */
     private Predicate<Appointment> createAppointmentPredicate(String searchText) {
         return appointment -> {
             if(searchText == null || searchText.isEmpty()) {
@@ -486,6 +560,7 @@ public class MainUIController implements Initializable {
 
     /**
      * loads table view with filtered results
+     * the lambda function used in this method makes our code cleaner and less bulky
      */
     private void loadFilteredAppointmentsTable() {
 
@@ -499,11 +574,14 @@ public class MainUIController implements Initializable {
 
         appointmentsTable.setItems(filteredAppointments);
         disableEnableUpdateAndDeleteAppointmentButtons();
+
+        if(appointmentsTable.getItems() != null) {
+            customiseFactory();
+        }
     }
 
     /**
      * gets all the appointments from the database
-     *
      * @return list of appointments
      */
     private ObservableList<Appointment> getAppointmentList() {
@@ -523,6 +601,11 @@ public class MainUIController implements Initializable {
         }
     }
 
+    /**
+     * checks if input is empty or null so that if it is not it can call the searchFindAppointments method to search for the input
+     * the lambda function used in this method makes our code cleaner and less bulky
+     * @param searchText text to search for
+     */
     private Predicate<Customer> createCustomerPredicate(String searchText) {
         return customer -> {
             if(searchText == null || searchText.isEmpty()) {
@@ -558,6 +641,7 @@ public class MainUIController implements Initializable {
 
     /**
      * loads table view with filtered results
+     * the lambda function used in this method makes our code cleaner and less bulky
      */
     public void loadFilteredCustomersTable() {
         ObservableList<Customer> customersList = getCustomersList();
@@ -569,7 +653,7 @@ public class MainUIController implements Initializable {
         );
 
         customersTable.setItems(filteredCustomers);
-        loadFilteredAppointmentsTable();
+//        loadFilteredAppointmentsTable();
         disableEnableUpdateAndDeleteCustomerButtons();
     }
 
@@ -725,6 +809,7 @@ public class MainUIController implements Initializable {
 
     /**
      * creates a listener for the date-picker
+     * the lambda function used in this method makes our code cleaner and less bulky
      */
     public void datePickerListener() {
         appointmentDatePickerField.valueProperty().addListener((ov, oldValue, newValue) -> {
@@ -789,6 +874,7 @@ public class MainUIController implements Initializable {
 
     /**
      * loads tooltip to pie graph slices when hovering over a pie slice
+     * the lambda function used in this method makes our code cleaner and less bulky
      */
     public void handlePieSliceHovered() {
         for(final PieChart.Data data : appointmentTypesPieChart.getData()) {
@@ -957,4 +1043,5 @@ public class MainUIController implements Initializable {
             totalAppointmentsLabel.setText("There are no appointments for this contact.");
         }
     }
+
 }
