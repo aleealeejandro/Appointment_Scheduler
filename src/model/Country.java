@@ -9,7 +9,7 @@ public class Country {
     private String country;
 
     /**
-     * Country constructor()
+     * Country constructor
      *
      * @param countryID the id of the specific country
      * @param country the name of the country

@@ -10,7 +10,7 @@ public class Contact {
     private String email;
 
     /**
-     * Contact constructor()
+     * Contact constructor
      *
      * @param contactID the id of the specific contact
      * @param contactName the name of the contact

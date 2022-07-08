@@ -10,7 +10,7 @@ public class Division {
     private int countryID;
 
     /**
-     * Division constructor()
+     * Division constructor
      *
      * @param divisionID the id of the specific division
      * @param division the name of the division

@@ -13,7 +13,7 @@ public class Customer {
     private String divisionID;
 
     /**
-     * Customer constructor()
+     * Customer constructor
      *
      * @param customerID the id of the specific customer
      * @param customerName the name of the customer

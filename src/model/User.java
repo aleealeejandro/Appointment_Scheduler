@@ -10,7 +10,7 @@ public class User {
     private String password;
 
     /**
-     * User constructor()
+     * User constructor
      *
      * @param userID the id of the specific user based on the
      * @param userName the username of the user
