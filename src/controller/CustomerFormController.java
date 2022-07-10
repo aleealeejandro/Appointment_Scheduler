@@ -100,6 +100,8 @@ public class CustomerFormController implements Initializable {
         customerFormTitle.setText("Add Customer");
         customerIDTextField.setText(CustomersQuery.getNextCustomerID());
         countriesComboBox.getSelectionModel().selectFirst();
+        divisionComboBox.getSelectionModel().selectFirst();
+        divisionChoice = divisionComboBox.getSelectionModel().getSelectedItem();
         countryChoice = countriesComboBox.getSelectionModel().getSelectedItem();
         saveButton.setText("Add");
     }
@@ -110,24 +112,33 @@ public class CustomerFormController implements Initializable {
      */
     public void loadUpdateCustomerForm() throws SQLException {
         int divisionId = Integer.parseInt(customer.getDivisionID());
-        Country country = new Country("1","U.S");
 
         try {
-            country = DivisionsQuery.getCountryFromDivisionID(divisionId);
+            Country country = DivisionsQuery.getCountryFromDivisionID(divisionId);
+            Division division = DivisionsQuery.getDivisionFromDivisionID(divisionId);
+            System.out.printf("Name: %s\n  ID: %s%n", customer.getCustomerName(), customer.getDivisionID());
+
+            customerFormTitle.setText("Update Customer");
+            customerIDTextField.setText(customer.getCustomerID());
+            customerNameTextField.setText(customer.getCustomerName());
+            addressTextField.setText(customer.getAddress());
+            postalCodeTextField.setText(customer.getPostalCode());
+            phoneNumberTextField.setText(customer.getPhone());
+            assert country != null;
+            countriesComboBox.getSelectionModel().select(country.getCountry());
+            countryChoice = countriesComboBox.getSelectionModel().getSelectedItem();
+            handleCountryChoice();
+
+            assert division != null;
+            divisionComboBox.getSelectionModel().select(division.getDivision());
+            divisionChoice = divisionComboBox.getSelectionModel().getSelectedItem();
+
+            saveButton.setText("Update");
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        customerFormTitle.setText("Update Customer");
-        customerIDTextField.setText(customer.getCustomerID());
-        customerNameTextField.setText(customer.getCustomerName());
-        addressTextField.setText(customer.getAddress());
-        postalCodeTextField.setText(customer.getPostalCode());
-        phoneNumberTextField.setText(customer.getPhone());
-        assert country != null;
-        countriesComboBox.getSelectionModel().select(country.getCountry());
-        countryChoice = countriesComboBox.getSelectionModel().getSelectedItem();
-        saveButton.setText("Update");
+
     }
 
     /**
@@ -141,7 +152,7 @@ public class CustomerFormController implements Initializable {
         for(Country c : countries) {
             countriesComboBox.getItems().add(c.getCountry());
         }
-//        countriesComboBox.getSelectionModel().selectFirst();
+
         loadDivisionChoicesInChoiceBox();
     }
 
@@ -161,30 +172,13 @@ public class CustomerFormController implements Initializable {
      */
     private void loadDivisionChoicesInChoiceBox() {
         divisionComboBox.getItems().clear();
-        ObservableList<Division> divisions = DivisionsQuery.getAllDivisions(countryChoice);
+        ObservableList<Division> divisions = DivisionsQuery.getAllDivisions(countriesComboBox.getSelectionModel().getSelectedItem());
         assert divisions != null;
 
         for(Division d : divisions) {
             divisionComboBox.getItems().add(d.getDivision());
         }
 
-        if(typeOfForm.equals("addCustomerForm")) {
-            divisionComboBox.getSelectionModel().selectFirst();
-            divisionChoice = divisionComboBox.getSelectionModel().getSelectedItem();
-        } else if(typeOfForm.equals("updateCustomerForm")) {
-            int divisionId = Integer.parseInt(customer.getDivisionID());
-            Division division = new Division(1,"Alabama");
-
-            try {
-                division = DivisionsQuery.getDivisionFromDivisionID(divisionId);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
-            assert division != null;
-            divisionComboBox.getSelectionModel().select(division.getDivision());
-            divisionChoice = divisionComboBox.getSelectionModel().getSelectedItem();
-        }
     }
 
     /**
@@ -223,7 +217,7 @@ public class CustomerFormController implements Initializable {
         checkIfFieldsAreEmpty();
 
         if(!fieldsEmpty) {
-            Division division = DivisionsQuery.getDivisionFromDivisionName(divisionChoice);
+            Division division = DivisionsQuery.getDivisionFromDivisionName(divisionComboBox.getSelectionModel().getSelectedItem());
             assert division != null;
 
             Customer customer = new Customer(

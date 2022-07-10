@@ -275,7 +275,7 @@
                                     </PieChart>
                                 </VBox>
                                 <VBox>
-                                    <Label text="Fully Booked Dates">
+                                    <Label text="Fully Booked Future Dates">
                                         <font>
                                             <Font size="18.0"/>
                                         </font>

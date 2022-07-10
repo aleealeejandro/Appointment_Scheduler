@@ -389,11 +389,12 @@ public class MainUIController implements Initializable {
             String startTime = appointmentsTable.getSelectionModel().getSelectedItem().getStartTime();
             String endTime = appointmentsTable.getSelectionModel().getSelectedItem().getEndTime();
             String startDate = appointmentsTable.getSelectionModel().getSelectedItem().getStartDate().format(TimeController.dateFormatter);
+            String type = appointmentsTable.getSelectionModel().getSelectedItem().getType();
 
             Alert deletionAlert = new Alert(Alert.AlertType.CONFIRMATION);
             deletionAlert.setTitle("Notice");
             deletionAlert.setHeaderText("Are you sure you want to delete the following?");
-            deletionAlert.setContentText(String.format("Appointment_ID: %s\nTime: %s - %s\nDate: %s", id, startTime, endTime, startDate));
+            deletionAlert.setContentText(String.format("Appointment_ID: %s\nType: %s\nTime: %s - %s\nDate: %s", id, type, startTime, endTime, startDate));
 
             Optional<ButtonType> result = deletionAlert.showAndWait();
 
