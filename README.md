@@ -73,11 +73,13 @@
   This is helpful to the user so that they can quickly check which days are fully scheduled.
 </p>
 
+<h4>
 IDE version number: IntelliJ IDEA 2022.1.2 (Community Edition)  
 JDK version number: Java SE 17.0.1
 JavaFX version compatible with JDK version: JavaFX-SDK-18.0.1
 MySQL Connector driver version number: mysql-connector-java-8.0.25
-
+</h4>
+  
 <h2>Scenario</h2>
 <p>
 You are working for a software company that has been contracted to develop a GUI-based scheduling desktop application. The contract is with a global consulting organization that conducts business in multiple languages and has main offices in Phoenix, Arizona; White Plains, New York; Montreal, Canada; and London, England. The consulting organization has provided a MySQL database that the application must pull data from. The database is used for other systems, so its structure cannot be modified.
@@ -85,3 +87,4 @@ You are working for a software company that has been contracted to develop a GUI
 The organization outlined specific business requirements that must be met as part of the application. From these requirements, a system analyst at your company created solution statements for you to implement in developing the application. These statements are listed in the requirements section.
 
 Your company acquires Country and First-Level-Division data from a third party that is updated once per year. These tables are populated with read-only data. Please use the attachment “Locale Codes for Region and Language” to review division data. Your company also supplies a list of contacts, which are populated in the Contacts table; however, administrative functions such as adding users are beyond the scope of the application and done by your company’s IT support staff. Your application should be organized logically using one or more design patterns and generously commented using Javadoc so your code can be read and maintained by other programmers.
+  </p>
