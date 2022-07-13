@@ -58,7 +58,7 @@
 </p>
 
 
-<h2>Directions<h2/> 
+<h2>Directions</h2> 
 <p>
   Upon opening the application the user is prompted with a login screen. Once the user is successfully logged in the main GUI is shown.
   The main GUI consists of three different tabs. The first tab is the Appointments tab. This tab shows the user a table of appointments. This table can be filtered and queried. The user can add an appointment at any given time. If the user wishes to update or delete an appointment they must first select a record from the table.
@@ -67,18 +67,17 @@
   If the user wants to log out they can do so at any time by either pressing the logout button or exiting the main GUI.
 </p>
 
-<h2>Additional Report Description<h2/>
+<h2>Additional Report Description</h2>
 <p>
   I chose to do a report that checks if there are fully booked dates within a year. If there are fully booked dates, they are shown in a list in the reports tab. 
   This is helpful to the user so that they can quickly check which days are fully scheduled.
 </p>
 
-<h4>
-IDE version number: IntelliJ IDEA 2022.1.2 (Community Edition)  
-JDK version number: Java SE 17.0.1
-JavaFX version compatible with JDK version: JavaFX-SDK-18.0.1
-MySQL Connector driver version number: mysql-connector-java-8.0.25
-</h4>
+
+<h4>IDE version number: IntelliJ IDEA 2022.1.2 (Community Edition)</h4>
+<h4>JDK version number: Java SE 17.0.1</h4>
+<h4>JavaFX version compatible with JDK version: JavaFX-SDK-18.0.1</h4>
+<h4>MySQL Connector driver version number: mysql-connector-java-8.0.25</h4>
   
 <h2>Scenario</h2>
 <p>
