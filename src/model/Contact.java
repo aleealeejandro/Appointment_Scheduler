@@ -1,7 +1,7 @@
 package model;
 
 /**
- *
+ * creates model for contact
  * @author Alexander Padilla
  */
 public class Contact {

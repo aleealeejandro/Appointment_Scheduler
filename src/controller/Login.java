@@ -19,7 +19,7 @@ import java.util.ResourceBundle;
 import java.util.TimeZone;
 
 /**
- *
+ * Handles login stage logic
  * @author Alexander Padilla
  */
 public class Login implements Initializable {

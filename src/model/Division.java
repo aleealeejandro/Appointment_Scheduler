@@ -1,7 +1,7 @@
 package model;
 
 /**
- *
+ * creates model for division
  * @author Alexander Padilla
  */
 public class Division {

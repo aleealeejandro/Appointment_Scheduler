@@ -7,7 +7,7 @@ import java.time.*;
 import java.util.Objects;
 
 /**
- *
+ * Creates file and logs user login and logout activity
  * @author Alexander Padilla
  */
 public class Logger {

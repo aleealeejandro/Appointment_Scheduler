@@ -2,7 +2,6 @@ package controller;
 
 import databaseQueries.*;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -19,7 +18,7 @@ import java.util.ResourceBundle;
 import static java.time.temporal.ChronoUnit.MINUTES;
 
 /**
- *
+ * Handles appointment form logic
  * @author Alexander Padilla
  */
 public class AppointmentFormController implements Initializable {

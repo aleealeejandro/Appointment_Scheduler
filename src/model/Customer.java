@@ -1,7 +1,7 @@
 package model;
 
 /**
- *
+ * creates model for customer
  * @author Alexander Padilla
  */
 public class Customer {

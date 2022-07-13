@@ -1,7 +1,7 @@
 package model;
 
 /**
- *
+ * creates model for country
  * @author Alexander Padilla
  */
 public class Country {

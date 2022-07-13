@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- *
+ * Handles all user queries to the database
  * @author Alexander Padilla
  */
 public class UserQuery {

@@ -11,7 +11,7 @@ import java.sql.*;
 import java.time.*;
 
 /**
- *
+ * Handles all appointment queries to the database
  * @author Alexander Padilla
  */
 public class AppointmentsQuery {

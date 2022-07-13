@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 /**
- *
+ * Handles all customer queries to the database
  * @author Alexander Padilla
  */
 public class CustomersQuery {

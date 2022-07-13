@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
 /**
- *
+ * Handles main user interface stage logic
  * @author Alexander Padilla
  */
 public class MainUIController implements Initializable {

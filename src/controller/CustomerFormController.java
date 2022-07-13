@@ -19,7 +19,7 @@ import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 /**
- *
+ * Handles customer form logic
  * @author Alexander Padilla
  */
 public class CustomerFormController implements Initializable {

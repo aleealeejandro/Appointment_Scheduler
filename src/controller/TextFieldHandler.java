@@ -9,7 +9,7 @@ import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
 /**
- *
+ * Handles text-field input
  * @author Alexander Padilla
  */
 public class TextFieldHandler {

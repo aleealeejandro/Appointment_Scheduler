@@ -8,7 +8,7 @@ import java.time.temporal.WeekFields;
 import java.util.Locale;
 
 /**
- *
+ * Handles logic for dates and time across different timezones
  * @author Alexander Padilla
  */
 public class TimeController {
@@ -17,10 +17,8 @@ public class TimeController {
     public static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
     public static DateTimeFormatter monthYearFormatter = DateTimeFormatter.ofPattern("MMMM yyyy");
     private static final ZoneId estZoneID = ZoneId.of("America/New_York");
-
     public static ZoneId systemZoneID = ZoneId.systemDefault();
     public static ZoneId utcZoneID = ZoneId.of("UTC");
-
     public static ZonedDateTime estTimeObject = ZonedDateTime.now(estZoneID);
     public static ZonedDateTime utcTimeObject = ZonedDateTime.now(utcZoneID);
     public static ZonedDateTime systemTimeObject = ZonedDateTime.now();

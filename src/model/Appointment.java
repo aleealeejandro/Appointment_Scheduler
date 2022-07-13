@@ -3,7 +3,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- *
+ * creates model for appointment
  * @author Alexander Padilla
  */
 public class Appointment {

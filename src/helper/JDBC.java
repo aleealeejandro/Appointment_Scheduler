@@ -4,7 +4,7 @@ import java.sql.DriverManager;
 import java.sql.Connection;
 
 /**
- *
+ * Connects and disconnects to the database
  * @author Alexander Padilla
  */
 public abstract class JDBC {

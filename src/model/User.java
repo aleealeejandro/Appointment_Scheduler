@@ -1,7 +1,7 @@
 package model;
 
 /**
- *
+ * creates model for user
  * @author Alexander Padilla
  */
 public class User {

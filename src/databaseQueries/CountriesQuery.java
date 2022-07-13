@@ -11,7 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- *
+ * Handles all country queries to the database
  * @author Alexander Padilla
  */
 public class CountriesQuery {

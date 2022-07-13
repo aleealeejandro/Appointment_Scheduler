@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- *
+ * Handles all division queries to the database
  * @author Alexander Padilla
  */
 public class DivisionsQuery {

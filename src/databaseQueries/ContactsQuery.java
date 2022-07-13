@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- *
+ * Handles all contact queries to the database
  * @author Alexander Padilla
  */
 public class ContactsQuery {
